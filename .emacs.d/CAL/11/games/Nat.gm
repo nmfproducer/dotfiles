@@ -1,0 +1,57 @@
+;; Derivation Game Nat:
+;; defined by Masahiko Sato at Sat Feb 15 21:01:18 2003
+;; defined by Masahiko Sato at Sun Feb  9 22:32:15 2003
+;; defined by Masahiko Sato at Sat Dec  7 23:16:13 2002
+;; defined by Masahiko Sato at Sun Oct  6 12:01:25 2002
+;; defined by Masahiko Sato at Sat Oct  5 23:27:39 2002
+;; defined by Masahiko Sato at Sat Sep 14 21:25:19 2002
+
+tokens[
+  
+  constant ::= "0" | "Nat" ;
+  operator ::= "S" | "+" | "*" | "=" ;
+  
+]
+
+syntax[
+
+  bj ::= infixL(term, ":", "Nat")
+  | infix(term, "=", term)
+  | throw "「%s」は基本判断ではありません"
+  ;
+
+  term ::= "0"
+  | varref
+  | paren("(", commit(term))
+  | prefix("S", paren("(", term))
+  | infix(term, "+", term)
+  | infix(term, "*", term)
+  | throw "「%s」は項でありません"
+  ;
+
+  tex-bj ::= tex-infix(tex-term, ":", "Nat")
+  | tex-infix(tex-term, "=", tex-term)
+  | throw "「%s」は基本判断ではありません"
+  ;
+
+  tex-term ::= "0" & tex-op
+  | tex-varref
+  | tex-paren("(", commit(tex-term))
+  | tex-prefix("S" & tex-op, tex-paren("(", tex-term))
+  | tex-infix(tex-term, "+" & tex-op, tex-term)
+  | tex-infix(tex-term, "*" & tex-op, tex-term)
+  | throw "「%s」は項でありません"
+  ;
+
+]
+
+rules[
+
+  "zero"():  0:Nat :- ;
+  "succ"(n): S(n):Nat :- n:Nat ;
+  "+zero"(n):      n+0=n :- n:Nat ;
+  "+succ"(n,k,v):  n+S(k)=S(v) :- n+k=v ;
+  "*zero"(n):      n*0=0 :- n:Nat ;
+  "*succ"(n,k,v,u):      n*S(k)=v :- n*k=u, u+n=v ;
+
+]

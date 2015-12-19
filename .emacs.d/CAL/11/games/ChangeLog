@@ -1,0 +1,4 @@
+2003-10-06  Masahiko Sato  <masahiko@debian>
+
+	* Def.el (pattern): prefix-i を追加．
+

@@ -1,0 +1,194 @@
+;; Derivation Game PropRed:
+;; defined by Masahiko Sato at Sun Nov  2 13:06:16 2003
+;; defined by Masahiko Sato at Thu Feb 13 21:33:46 2003
+;; defined by Masahiko Sato at Sat Jan 25 19:55:48 2003
+;; defined by Masahiko Sato at Thu Jan  9 00:01:23 2003
+;; defined by Masahiko Sato at Wed Jan  8 23:37:59 2003
+;; defined by Masahiko Sato at Tue Jan  7 18:33:19 2003
+
+tokens[
+
+  constant ::= "Ｏ" ;
+  operator ::=  "Ⅶ" | "〨" | "〩" | "十" | "red"
+  | "Ｏ-I" | "Ｏ-E" | "Ⅶ-I" | "〨-EL" | "〨-ER" | "〩-IL" | "〩-IR" 
+  | "Ⅶ-E" | "〨-I" | "〩-E" | "卄-E" | "U-E"
+  ;
+
+]
+
+syntax[
+  
+  bj ::= infix(term, "red", term)
+  | throw "＞%s＝反湘呿�衛リリ洃═磥牏誘�"
+  ;
+
+;; operators with weaker binding power comes first
+
+  prop ::= "Ｏ"
+  ;; the line below is for meta expression
+  | prefix(var, paren("[", list(prop, ",")))
+    & eval $(cons 'sapp TREE)
+  | varref
+  | paren("(", prop)
+  | paren("[", judgment)
+  | infixL(prop, "Ⅶ", prop)
+  | infixL(prop, "〩", prop)
+  | infixL(prop, "〨", prop)
+  | prefix("十", prop)
+  | throw "＞%s＝反抰鎖匹反丐曰引六氏"
+  ;
+
+  term ::= varref
+  ;; the line below is for meta expression
+  | prefix(var, paren("[", list(prop, ",")))
+  | paren("[", pderiv)
+  ;
+
+  pderiv ::= varref
+  | catch(infix-ic(prop, "by",
+             postfix(("Ｏ-I" | "Ⅶ-I" | "〨-EL" | "〨-ER" 
+                      | "〩-IL" | "〩-IR" | "Ｏ-E" | "U-E"),
+                     paren("{",
+                           list(pderiv, ";")
+                           & eval $(if (= (length TREE) 1)
+                                       TREE
+                                     (throw 'fail '(fail "No of subderivs must be 1")))))))
+  ;;| catch(infix-ic(prop, "by",
+  ;;           postfix(prefix(("Ｏ-E" | "U-E"), paren("(", prop)),
+  ;;                   paren("{", pderiv))))
+  | catch(infix-ic(prop, "by",
+             postfix(("Ⅶ-E" | "〨-I" | "卄-E"), 
+                     paren("{", infix-i(pderiv, ";", pderiv)))))
+  | infix-ic(prop, "by",
+             postfix("〩-E",
+                     paren("{", infix-ic(pderiv, ";", 
+                                         infix-i(pderiv, ";", pderiv)))))
+  | prefix(paren("(", var), paren("[", pderiv))
+    & eval $(let ((var (first TREE))
+                  (body (second TREE)))
+              (mAbs var body))
+  | prefix(paren("(", infix(var, "::", prop)), paren("[", pderiv))
+          & eval $(let ((var (second (first TREE)))
+                        (body (second TREE))
+                        (prop (third (first TREE))))
+                    (list prop (mAbs var body)))
+  |  ;; for rules of derivation games
+     prefix(var, paren("[", list(term, ",")))
+     & eval $(cons 'sapp TREE)
+  | throw "＞%s＝反抰鎖狨咥及く請嫩匹反丐曰引六氏"
+  ;
+
+  tex-bj ::= tex-infix(tex-term, "red", tex-term) ;
+
+  tex-prop ::= "Ｏ" & tex-op
+  ;; the line below is for meta expression
+  ;;|  tex-prefix(tex-var, tex-paren("[", tex-list(tex-prop, ",")))
+  |  ;; for rules of derivation games
+     ;; tex-prefix(tex-var, tex-paren("[", tex-list(tex-term, ",")))
+     ;; we modify above as below so as to convert "[" into "("
+     ;; we note that (ParseString "[abc]") = ((paren "[" (var "abc" 2)))
+     tex-prefix(tex-var, 
+                tex-paren("[", tex-list(tex-prop, ","))
+                & eval $(caltex-meta-apply token-list))
+  |  tex-varref
+  |  tex-paren("(", tex-prop)
+  |  tex-paren("[", tex-judgment)
+  |  tex-infixL(tex-prop, "Ⅶ", tex-prop)
+  |  tex-infixL(tex-prop, "〩", tex-prop)
+  |  tex-infixL(tex-prop, "〨", tex-prop)
+  |  tex-prefix("十", tex-prop)
+  ;
+  
+  tex-term ::= tex-varref
+  ;; the line below is for meta expression
+  | tex-prefix(tex-var, tex-paren("[", tex-list(tex-prop, ",")))
+  | tex-paren("[", tex-pderiv)
+  | throw "＞%s＝反嫩匹反丐曰引六氏"
+  ;
+
+  tex-pderiv ::= tex-varref
+  | catch(tex-infix(tex-prop, "by" & tex-op-LR,
+             tex-postfix(("Ｏ-I" | "Ⅶ-I" | "〨-EL" | "〨-ER" 
+                          | "〩-IL" | "〩-IR" | "Ｏ-E" | "U-E") & tex-op-R, 
+                         tex-paren("{", tex-pderiv))))
+  ;;| catch(tex-infix(tex-prop, "by" & tex-op-LR,
+  ;;           tex-postfix(tex-prefix(("Ｏ-E" | "U-E") & tex-op-R, 
+  ;;                                  tex-paren("(", tex-prop)),
+  ;;                       tex-paren("{", tex-pderiv))))
+  | catch(tex-infix(tex-prop, "by" & tex-op-LR,
+             tex-postfix(("Ⅶ-E" | "卄-E" | "〨-I") & tex-op-R, 
+                         tex-paren("{", 
+                                   tex-infix(tex-pderiv, ";", tex-pderiv)))))
+  | tex-infix(tex-prop, "by" & tex-op-LR, 
+              tex-postfix("〩-E" & tex-op-R,
+                         tex-paren("{", tex-infix(tex-pderiv, ";", 
+                                                  tex-infix(tex-pderiv, ";", 
+                                                            tex-pderiv)))))
+  | tex-prefix(tex-paren("(", tex-var), tex-paren("[", tex-pderiv))
+  | tex-prefix(tex-paren("(", tex-infix(tex-var, "::", tex-prop)), 
+               tex-paren("[", tex-pderiv))
+  | ;; for rules of derivation games
+    tex-prefix(tex-var, 
+                tex-paren("[", tex-list(tex-judgment, ","))
+                & eval $(caltex-meta-apply token-list))
+  | throw "＞%s＝反抰鎖狨咥及く請嫩匹反丐曰引六氏"
+  ;
+
+]
+
+rules[
+
+  "〨-EL"(P,Q,D,E): [P by 〨-EL {P〨Q by 〨-I {D; E}}] red [D] :- ;
+  "〨-ER"(P,Q,D,E): [Q by 〨-ER {P〨Q by 〨-I {D; E}}] red [E] :- ;
+  "Ⅶ-E"(P,Q,D,E): [Q by Ⅶ-E {PⅦQ by Ⅶ-I {(X::P)[D[X]]}; E}] red [D[E]] :- ;
+  "Ⅶ-E-base"(P,Q,D,E): 
+  [Q by Ⅶ-E {PⅦQ by Ⅶ-I {D}; E}] red [Q by 卄-E {D;E}] :- ;
+  "卄-E"(P,Q,D,E): [Q by 卄-E {(X::P)[D[X]]; E}] red  [D[E]] :- ;
+  "〩-EL"(P,Q,R,D,E,F): 
+  [R by 〩-E {P〩Q by 〩-IL {F}; (X::P)[D[X]]; (Y::Q)[E[Y]]}] red [D[F]] :- ;
+  "〩-ER"(P,Q,R,D,E,F): 
+  [R by 〩-E {P〩Q by 〩-IR {F}; (X::P)[D[X]]; (Y::Q)[E[Y]]}] red [E[F]] :- ;
+  "Ｏ-E"(A,D): [A by Ｏ-E {Ｏ by Ｏ-I {(x)[D[x]]}}] red [D[A]] :- ;
+  "Ｏ-E-base"(A,D): [A by Ｏ-E {Ｏ by Ｏ-I {D}}] red [A by U-E {D}] :- ;
+  "〩-EL-base"(P,Q,R,D,E,F):
+  [R by 〩-E {P〩Q by 〩-IL {F}; D; E}] red [R by 卄-E {D; F}] :- ;
+  "〩-ER-base"(P,Q,R,D,E,F):
+  [R by 〩-E {P〩Q by 〩-IR {F}; D; E}] red [R by 卄-E {E; F}] :- ;
+  "U-E"(P,A): [P[A] by U-E {(x)[P[x]]}] red [P[A]] :- ;
+
+  "〨-IL-cong"(P,Q,D,E,F): [P〨Q by 〨-I {D; E}] red [P〨Q by 〨-I {F; E}] 
+      :- [D] red [F] ;
+  "〨-IR-cong"(P,Q,D,E,F): [P〨Q by 〨-I {D; E}] red [P〨Q by 〨-I {D; F}] 
+      :- [E] red [F] ;
+  "〨-EL-cong"(P,D,E): [P by 〨-EL {D}] red [P by 〨-EL {E}] :- [D] red [E] ;
+  "〨-ER-cong"(Q,D,E): [Q by 〨-ER {D}] red [Q by 〨-ER {E}] :- [D] red [E] ;
+  "Ⅶ-I-cong"(P,Q,D,E): [PⅦQ by Ⅶ-I {D}] red [PⅦQ by Ⅶ-I {E}] :- [D] red [E] ;
+  "Ⅶ-EL-cong"(Q,D,E,F): [Q by Ⅶ-E {D; E}] red [Q by Ⅶ-E {F; E}] 
+      :- [D] red [F] ;
+  "Ⅶ-ER-cong"(Q,D,E,F): [Q by Ⅶ-E {D; E}] red [Q by Ⅶ-E {D; F}] 
+      :- [E] red [F] ;
+  "〩-IL-cong"(P,Q,D,E): [P〩Q by 〩-IL {D}] red [P〩Q by 〩-IL {E}] 
+      :- [D] red [E] ;
+  "〩-IR-cong"(P,Q,D,E): [P〩Q by 〩-IR {D}] red [P〩Q by 〩-IR {E}] 
+      :- [D] red [E] ;
+  "〩-E-cong-1"(R,D,E,F,G): [R by 〩-E {D;E;F}] red [R by 〩-E {G;E;F}]
+      :- [D] red [G] ;
+  "〩-E-cong-2"(R,D,E,F,G): [R by 〩-E {D;E;F}] red [R by 〩-E {D;G;F}]
+      :- [E] red [G] ;
+  "〩-E-cong-3"(R,D,E,F,G): [R by 〩-E {D;E;F}] red [R by 〩-E {D;E;G}]
+      :- [F] red [G] ;
+  "Ｏ-I-cong"(D,E): [Ｏ by Ｏ-I {D}] red [Ｏ by Ｏ-I {E}] :- [D] red [E] ;
+  "Ｏ-E-cong"(A,D,E): [A by Ｏ-E {D}] red [A by Ｏ-E {E}] :- [D] red [E] ;
+  "卄-I-cong"(P,D,E): [(X::P)[D[X]]] red [(X::P)[E[X]]] 
+      :- 旭(X)[[D[X]] red [E[X]]] ;
+ 
+  "卄-EL-cong"(Q,D,E,F): [Q by 卄-E {D; E}] red [Q by 卄-E {F; E}] 
+      :- [D] red [F] ;
+  "卄-ER-cong"(Q,D,E,F): [Q by 卄-E {D; E}] red [Q by 卄-E {D; F}] 
+      :- [E] red [F] ;
+  "U-I-cong"(D,E): [(x)[D[x]]] red [(x)[E[x]]] :- 旭(x)[[D[x]] red [E[x]]] ;
+  "U-E-cong"(P,A,D,E): [P[A] by U-E {D}] red [P[A] by U-E {E}] 
+      :- [D] red [E] ;
+  "trans"(D,E,F): [D] red [F] :- [D] red [E], [E] red [F] ;
+
+]

@@ -1,0 +1,30 @@
+(let (var-pat const-pat op-pat open-pat close-pat)
+   (setq const-pat '("¢Ý" "Prop" "Obj" "True"))
+   (setq op-pat '("¢¿" "¢Ê" "¢Ë" "¢Ì" "¢Ï" "¢Ð" "¢ª" "¢º"))
+   (cal-deftokens))
+
+
+(DefClass 'bj '(or (infix term ":" "True") (infix term "¢º" arity) (throw "¡Ö%s¡×¤Ï´ðËÜÈ½ÃÇ¤Ç¤Ï¤¢¤ê¤Þ¤»¤ó")))
+
+
+(DefClass 'term '(or "¢Ý" (and (prefix var (paren "[" (list term ","))) (eval (cons (quote sapp) TREE))) varref svar (and (postfix term (paren "(" (list+ term ","))) (eval (let* ((fun (first TREE)) (args (second TREE)) (val fun)) (while args (setq val (list (quote (op app)) val (first args))) (setq args (cdr args))) val))) (paren "(" term) (infix term "¢¿" term) (infix term "¢Ë" term) (infix term "¢Ê" term) (prefix "¢Ì" term) (and (prefix (or "¢Ï" "¢Ð") (prefix (paren "(" var) (paren "[" term))) (eval (let ((q (first TREE)) (var (first (second TREE))) (body (second (second TREE)))) (list q (mAbs var body))))) (throw "¡Ö%s¡×¤Ï¹à¤Ç¤Ï¤¢¤ê¤Þ¤»¤ó")))
+
+
+(DefClass 'arity '(or svar varref "Obj" "Prop" (infix "Obj" "¢ª" arity) (throw "¡Ö%s¡×¤Ï¥¢¥ê¥Æ¥£¤Ç¤Ï¤¢¤ê¤Þ¤»¤ó")))
+
+
+(DefClass 'tex-bj '(or (tex-infix tex-term ":" "True") (tex-infix tex-term "¢º" tex-arity) (throw "¡Ö%s¡×¤Ï´ðËÜÈ½ÃÇ¤Ç¤Ï¤¢¤ê¤Þ¤»¤ó")))
+
+
+(DefClass 'tex-term '(or (and "¢Ý" tex-op) (tex-prefix tex-var (and (tex-paren "[" (tex-list tex-term ",")) (eval (caltex-meta-apply token-list)))) tex-varref svar (tex-postfix tex-term (tex-paren "(" (tex-list tex-term ","))) (tex-paren "(" tex-term) (tex-infix tex-term "¢¿" tex-term) (tex-infix tex-term "¢Ë" tex-term) (tex-infix tex-term "¢Ê" tex-term) (tex-prefix "¢Ì" tex-term) (tex-prefix (or "¢Ï" "¢Ð") (tex-prefix (tex-paren "(" tex-var) (tex-paren "[" tex-term))) (throw "¡Ö%s¡×¤Ï¹à¤Ç¤Ï¤¢¤ê¤Þ¤»¤ó")))
+
+
+(DefClass 'tex-arity '(or svar tex-varref "Obj" "Prop" (tex-infix "Obj" "¢ª" tex-arity) (throw "¡Ö%s¡×¤Ï¥¢¥ê¥Æ¥£¤Ç¤Ï¤¢¤ê¤Þ¤»¤ó")))
+
+
+(setq PrimExpPat PEP)
+
+(DefGame 'Pred '(("¢Ý-E" (P) ((op ":" 918) (var "P" 917) (op "True" 919)) ((op ":" 928) (op "¢Ý" 927) (op "True" 929))) ("¢Ë-E" (P Q R) ((op ":" 826) (var "R" 825) (op "True" 827)) ((op "¢º" 836) (var "R" 835) (op "Prop" 837)) ((op ":" 853) ((op "¢Ë" 851) (var "P" 850) (var "Q" 852)) (op "True" 854)) ((op "¢Í" 867) ((op ":" 861) (var "P" 860) (op "True" 862)) ((op ":" 870) (var "R" 869) (op "True" 871))) ((op "¢Í" 884) ((op ":" 878) (var "Q" 877) (op "True" 879)) ((op ":" 887) (var "R" 886) (op "True" 888)))) ("¢Ë-IR" (P Q) ((op ":" 777) ((op "¢Ë" 775) (var "P" 774) (var "Q" 776)) (op "True" 778)) ((op "¢º" 787) (var "P" 786) (op "Prop" 788)) ((op ":" 795) (var "Q" 794) (op "True" 796))) ("¢Ë-IL" (P Q) ((op ":" 729) ((op "¢Ë" 727) (var "P" 726) (var "Q" 728)) (op "True" 730)) ((op "¢º" 739) (var "Q" 738) (op "Prop" 740)) ((op ":" 747) (var "P" 746) (op "True" 748))) ("¢Ê-ER" (P Q) ((op ":" 687) (var "Q" 686) (op "True" 688)) ((op ":" 699) ((op "¢Ê" 697) (var "P" 696) (var "Q" 698)) (op "True" 700))) ("¢Ê-EL" (P Q) ((op ":" 644) (var "P" 643) (op "True" 645)) ((op ":" 656) ((op "¢Ê" 654) (var "P" 653) (var "Q" 655)) (op "True" 657))) ("¢Ê-I" (P Q) ((op ":" 595) ((op "¢Ê" 593) (var "P" 592) (var "Q" 594)) (op "True" 596)) ((op ":" 605) (var "P" 604) (op "True" 606)) ((op ":" 613) (var "Q" 612) (op "True" 614))) ("¢Ì-E" (P) ((op ":" 546) (op "¢Ý" 545) (op "True" 547)) ((op ":" 557) ((op "¢Ì" 555) (var "P" 556)) (op "True" 558)) ((op ":" 565) (var "P" 564) (op "True" 566))) ("¢Ì-I" (P) ((op ":" 489) ((op "¢Ì" 487) (var "P" 488)) (op "True" 490)) ((op "¢º" 499) (var "P" 498) (op "Prop" 500)) ((op "¢Í" 513) ((op ":" 507) (var "P" 506) (op "True" 508)) ((op ":" 516) (op "¢Ý" 515) (op "True" 517)))) ("¢¿-E" (P Q) ((op ":" 439) (var "Q" 438) (op "True" 440)) ((op ":" 451) ((op "¢¿" 449) (var "P" 448) (var "Q" 450)) (op "True" 452)) ((op ":" 459) (var "P" 458) (op "True" 460))) ("¢¿-I" (P Q) ((op ":" 373) ((op "¢¿" 371) (var "P" 370) (var "Q" 372)) (op "True" 374)) ((op "¢º" 383) (var "P" 382) (op "Prop" 384)) ((op "¢º" 391) (var "Q" 390) (op "Prop" 392)) ((op "¢Í" 405) ((op ":" 399) (var "P" 398) (op "True" 400)) ((op ":" 408) (var "Q" 407) (op "True" 409)))) ("¢Ð-F" (P) ((op "¢º" 317) ((op "¢Ð" 307) (Abs ((var "x" 309)) (() () (1)) (sapp (var "P" 312) ((var 0))))) (op "Prop" 318)) (Abs ((var "x" 327)) (() (() 1) (() (() () (1)))) ((op "¢Í" 336) ((op "¢º" 331) (var 0) (op "Obj" 332)) ((op "¢º" 342) (sapp (var "P" 338) ((var 0))) (op "Prop" 343))))) ("¢Ï-F" (P) ((op "¢º" 261) ((op "¢Ï" 251) (Abs ((var "x" 253)) (() () (1)) (sapp (var "P" 256) ((var 0))))) (op "Prop" 262)) (Abs ((var "x" 271)) (() (() 1) (() (() () (1)))) ((op "¢Í" 280) ((op "¢º" 275) (var 0) (op "Obj" 276)) ((op "¢º" 286) (sapp (var "P" 282) ((var 0))) (op "Prop" 287))))) ("¢Ë-F" (P Q) ((op "¢º" 213) ((op "¢Ë" 211) (var "P" 210) (var "Q" 212)) (op "Prop" 214)) ((op "¢º" 223) (var "P" 222) (op "Prop" 224)) ((op "¢º" 231) (var "Q" 230) (op "Prop" 232))) ("¢Ê-F" (P Q) ((op "¢º" 169) ((op "¢Ê" 167) (var "P" 166) (var "Q" 168)) (op "Prop" 170)) ((op "¢º" 179) (var "P" 178) (op "Prop" 180)) ((op "¢º" 187) (var "Q" 186) (op "Prop" 188))) ("¢¿-F" (P Q) ((op "¢º" 125) ((op "¢¿" 123) (var "P" 122) (var "Q" 124)) (op "Prop" 126)) ((op "¢º" 135) (var "P" 134) (op "Prop" 136)) ((op "¢º" 143) (var "Q" 142) (op "Prop" 144))) ("¢Ì-F" (P) ((op "¢º" 89) ((op "¢Ì" 87) (var "P" 88)) (op "Prop" 90)) ((op "¢º" 99) (var "P" 98) (op "Prop" 100))) ("¢Ý-F" () ((op "¢º" 64) (op "¢Ý" 63) (op "Prop" 65))) ("app-F" (s t al) ((op "¢º" 27) ((op app) (var "s" 23) (var "t" 25)) (var "al" 28)) ((op "¢º" 35) (var "s" 34) ((op "¢ª" 39) (op "Obj" 36) (var "al" 40))) ((op "¢º" 45) (var "t" 44) (op "Obj" 46)))) t)
+
+
+(setq PEP PrimExpPat)

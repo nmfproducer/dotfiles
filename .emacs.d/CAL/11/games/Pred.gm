@@ -1,0 +1,116 @@
+;; Derivation Game Pred:
+;; defined by Masahiko Sato at Tue Jul  8 14:44:02 2003
+;; defined by Masahiko Sato at Mon Jul  7 16:29:12 2003
+;; defined by Masahiko Sato at Wed Jul  2 11:10:27 2003
+;; defined by Masahiko Sato at Mon Jun 30 16:15:47 2003
+;; defined by Masahiko Sato at Fri Jun 27 11:42:58 2003
+;; defined by Masahiko Sato at Wed Jun 25 14:24:30 2003
+;; defined by Masahiko Sato at Sun Jun 22 12:29:32 2003
+
+;; intuitionistic predicate calculus
+
+tokens[
+
+  constant ::= "¢Ý" | "Prop" | "Obj" | "True" ;
+  operator ::=  "¢¿" | "¢Ê" | "¢Ë" | "¢Ì" | "¢Ï" | "¢Ð" | "¢ª" | "¢º" ;
+
+]
+
+syntax[
+  
+  bj ::= infix(term, ":", "True")
+  | infix(term, "¢º", arity)
+  | throw "¡Ö%s¡×¤Ï´ðËÜÈ½ÃÇ¤Ç¤Ï¤¢¤ê¤Þ¤»¤ó"
+  ;
+
+  term ::= "¢Ý"
+  ;; the line below is for meta expression
+  | prefix(var, paren("[", list(term, ",")))
+    & eval $(cons 'sapp TREE)
+  | varref
+  | svar
+  | postfix(term, paren("(", list+(term, ",")))
+    & eval $(let* ((fun (first TREE))
+                   (args (second TREE))
+                   (val fun))
+             (while args
+              (setq val (list '(op app) val (first args)))
+              (setq args (cdr args)))
+             val)
+  | paren("(", term)
+  | infixL(term, "¢¿", term)
+  | infixL(term, "¢Ë", term)
+  | infixL(term, "¢Ê", term)
+  | prefix("¢Ì", term)
+  | prefix(("¢Ï" | "¢Ð"),
+           prefix(paren("(", var), paren("[", term)))
+    & eval $(let ((q (first TREE))
+                  (var (first (second TREE)))
+                  (body (second (second TREE))))
+              (list q (mAbs var body)))
+  | throw "¡Ö%s¡×¤Ï¹à¤Ç¤Ï¤¢¤ê¤Þ¤»¤ó"
+  ;
+
+  arity ::= svar
+  | varref
+  | "Obj"
+  | "Prop"
+  | infix("Obj", "¢ª", arity)
+  | throw "¡Ö%s¡×¤Ï¥¢¥ê¥Æ¥£¤Ç¤Ï¤¢¤ê¤Þ¤»¤ó"
+  ;
+
+  tex-bj ::= tex-infix(tex-term, ":", "True")
+  | tex-infix(tex-term, "¢º", tex-arity)
+  | throw "¡Ö%s¡×¤Ï´ðËÜÈ½ÃÇ¤Ç¤Ï¤¢¤ê¤Þ¤»¤ó"
+  ;
+
+  tex-term ::= "¢Ý" & tex-op
+  ;; the line below is for meta expression
+  | tex-prefix(tex-var, 
+               tex-paren("[", tex-list(tex-term, ","))
+               & eval $(caltex-meta-apply token-list))
+  | tex-varref
+  | svar
+  | tex-postfix(tex-term, tex-paren("(", tex-list(tex-term, ",")))
+  | tex-paren("(", tex-term)
+  | tex-infixL(tex-term, "¢¿", tex-term)
+  | tex-infixL(tex-term, "¢Ë", tex-term)
+  | tex-infixL(tex-term, "¢Ê", tex-term)
+  | tex-prefix("¢Ì", tex-term)
+  | tex-prefix(("¢Ï" | "¢Ð"),
+           tex-prefix(tex-paren("(", tex-var), tex-paren("[", tex-term)))
+  | throw "¡Ö%s¡×¤Ï¹à¤Ç¤Ï¤¢¤ê¤Þ¤»¤ó"
+  ;
+
+  tex-arity ::= svar
+  | tex-varref
+  | "Obj"
+  | "Prop"
+  | tex-infix("Obj", "¢ª", tex-arity)
+  | throw "¡Ö%s¡×¤Ï¥¢¥ê¥Æ¥£¤Ç¤Ï¤¢¤ê¤Þ¤»¤ó"
+  ;
+
+]
+
+rules[
+  "app-F"(s, t, al):	s(t)¢ºal :- s¢ºObj¢ªal, t¢ºObj ;
+  "¢Ý-F"():	¢Ý¢ºProp :- ;
+  "¢Ì-F"(P):	¢ÌP¢ºProp :- P¢ºProp ;
+  "¢¿-F"(P, Q):	P¢¿Q¢ºProp :- P¢ºProp, Q¢ºProp ;
+  "¢Ê-F"(P, Q):	P¢ÊQ¢ºProp :- P¢ºProp, Q¢ºProp ;
+  "¢Ë-F"(P, Q):	P¢ËQ¢ºProp :- P¢ºProp, Q¢ºProp ;
+  "¢Ï-F"(P):	¢Ï(x)[P[x]]¢ºProp :- (x)[x¢ºObj ¢Í P[x]¢ºProp] ;
+  "¢Ð-F"(P):	¢Ð(x)[P[x]]¢ºProp :- (x)[x¢ºObj ¢Í P[x]¢ºProp] ;
+  "¢¿-I"(P, Q):     P¢¿Q:True :- P¢ºProp, Q¢ºProp, P:True ¢Í Q:True ;
+  "¢¿-E"(P, Q):        Q:True :- P¢¿Q:True, P:True ;
+  "¢Ì-I"(P):         ¢ÌP:True :- P¢ºProp, P:True ¢Í ¢Ý:True ;
+  "¢Ì-E"(P):          ¢Ý:True :- ¢ÌP:True, P:True ;
+  "¢Ê-I"(P, Q):     P¢ÊQ:True :- P:True, Q:True ;
+  "¢Ê-EL"(P, Q):       P:True :- P¢ÊQ:True ;
+  "¢Ê-ER"(P, Q):       Q:True :- P¢ÊQ:True ;
+  "¢Ë-IL"(P, Q):    P¢ËQ:True :- Q¢ºProp, P:True ;
+  "¢Ë-IR"(P, Q):    P¢ËQ:True :- P¢ºProp, Q:True ;
+  "¢Ë-E"(P, Q, R):     R:True :- R¢ºProp, 
+      P¢ËQ:True, P:True ¢Í R:True, Q:True ¢Í R:True ;
+  "¢Ý-E"(P):           P:True :- ¢Ý:True ;
+]

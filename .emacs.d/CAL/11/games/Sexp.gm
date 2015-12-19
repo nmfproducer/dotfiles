@@ -1,0 +1,40 @@
+;; Derivation Game Sexp:
+;; defined by Masahiko Sato at Wed Nov 20 15:59:06 2002
+
+tokens[
+
+  constant ::= regexp "[A-Z][A-Z0-9]*" 
+  | "Atom" | "Sexp" ;
+
+  operator ::= "." ;
+
+  ]
+
+syntax[
+
+  bj ::= infix(Sexp, ":", "Atom")
+  | infix(Sexp, ":", "Sexp")
+  ;
+
+  Sexp ::= varref
+  | Atom
+  | paren("(", infix(Sexp, ".", Sexp))
+  ;
+
+  Atom ::= op 
+  & eval 
+  $(if (sexp-atom TREE) 
+       TREE
+     (throw 'err (list 'err nil "アトムでありません")))
+  ;
+
+]
+
+rules[
+
+  "atom"(a): a:Atom :- $(sexp-atom a) ;
+
+  "sexp1"(a): a:Sexp :- a:Atom ;
+  "sexp2"(a,b): (a . b):Sexp :- a:Sexp, b:Sexp ;
+
+]

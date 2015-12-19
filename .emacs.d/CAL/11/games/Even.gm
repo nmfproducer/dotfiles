@@ -1,0 +1,30 @@
+;; Derivation Game Even:
+;; defined by Masahiko Sato at Wed Oct  2 15:45:42 2002
+
+;; Derivation Game Even:
+;; defined by Masahiko Sato at Wed Oct  2 14:25:56 2002
+
+tokens[
+
+  constant ::= "0" | regexp "[1-9][0-9]*"
+  | "Even" ;
+
+]
+
+syntax[
+
+  bj ::= infix(term, ":", ("Even" | "Odd")) ;
+
+  term ::= varref
+  | "0"
+  | op & eval $(if (integerp (second TREE)) TREE (error "not a term"))
+  ;
+
+]
+
+rules[
+
+  "even"(n): n : Even :- $(let ((k (string-to-int (second n))))
+                           (if (= (mod k 2) 0) t nil)) ;
+
+]

@@ -1,0 +1,573 @@
+;; Derivation Game New8:
+;; defined by  at Sat Feb  1 15:34:44 2003
+;; defined by  at Fri Jan 31 15:50:52 2003
+
+tokens[
+  constant ::= regexp "[A-Z][A-Z0-9]*" 
+  ;; type
+  | "Form" | "Const" | "Var" | "ConsF" | "CarF" | "CdrF"
+  | "AtomF" | "EqF" | "AppF" | "Cond" | "Fun" | "FormList"
+  | "VarList" | "CList" | "Atom" | "Sexp" | "Env"
+  ;; Ev(_,e,a,v)
+  | regexp"[1-4]" | "Ev" | "P"
+  ;; _(_,_,...)
+  | "EvalForm" | "Eval" | "EvArgs" | "Apply" | "EvCList"
+  | "PairUp" | "Assoc" | "EqAtom" | "NeqAtom" | "member"
+  ;; EVAL definition
+  | "Efun" | "Econd1" | "Econd2" 
+  | "Ecl1" | "Ecl2" | "Ecl3" | "Ecl4" 
+  | "Ecl21" | "Ecl22" | "Ecl23" | "Ecl24" | "Ecl25"
+  | "Ecl26" | "Ecl27" | "Ecl28"
+  ;; EVAL environment
+  | "Eenv" | "EenvConst" | "EenvVar" | "EenvCons" | "EenvCar"
+  | "EenvCdr" | "EenvAtom" | "EenvEq" | "EenvApp" | "EenvCond"
+  | "EenvNil" | "EenvAppVar" | "EenvAppLam" | "EenvAppLab"
+  | "EenvCList"
+  | "Ｏ"
+  ;
+  operator ::= "." | ","  
+  | "Ⅶ" | "〨" | "〩" | "十" | "Ⅱ" | "竹" | "Ｂ"
+   ;
+]
+
+syntax[
+  bj ::= infix(term, "Ⅱ", prop)
+  | catch(prop)
+  | catch(Eval)
+  | throw "＞%s＝反湘呿�衛リリ洃═磥牏誘�"
+  ;
+  prop ::= "Ｏ"
+  ;; the line below is for meta expression
+  | prefix(var, paren("[", infix(Number,",",
+                           infix(Form2,",", infix(Env,",",VorVlist)))))
+    & eval $(cons 'sapp TREE)
+  | varref
+  | paren("(", prop)
+  | paren("[", judgment)
+  | infixL(prop, "Ⅶ", prop)
+  | infixL(prop, "〩", prop)
+  | infixL(prop, "〨", prop)
+  | prefix("十", prop)
+  | prefix("Ｂ", prefix(paren("(",var), paren("[",bj)))
+  | prefix("member", paren("(", infix(Sexp,",",Sexp)))
+  | throw "＞%s＝反抰鎖匹反丐曰引六氏"
+  ;
+
+  Eval ::=
+    prefix("P", paren("[", infix(Number,",", 
+                            infix(Sexp,",", infix(Sexp,",",Value)))))
+
+  | prefix("Ev", paren("(", infix(Number,",", infix(varref,",",
+                                  infix(varref,",",varref)))))
+  | prefix("Ev", paren("(", infix("1",",", 
+                            infix(Form,",", infix(Env,",",Value)))))
+  | prefix("Ev", paren("(", infix("2",",", infix(Formlist,",",
+                            infix(Env,",",Valuelist)))))
+  | prefix("Ev", paren("(", infix("3",",",
+                     infix(paren("(", infix(catch(Fun),",",Valuelist)),",",
+                           infix(Env,",",Value)))))
+  | prefix("Ev", paren("(", infix("4",",",
+                     infix(Clist,",", infix(Env,",",Value)))))
+
+  | prefix("EvalForm", paren("(", infix(Form,",", infix(Env,",",Value))))
+  | prefix("Eval", paren("(", infix(Form,",", infix(Env,",",Value))))
+  | prefix("EvArgs", paren("(", infix(Formlist,",",
+                                infix(Env,",",Valuelist))))
+  | prefix("Apply", paren("(", infix(paren("(", 
+               infix(catch(Fun),",",Valuelist)),",", infix(Env,",",Value))))
+  | prefix("EvCList", paren("(", infix(Clist,",", infix(Env,",",Value))))
+
+  | prefix("PairUp", paren("(",infix(Varlist,",",
+                     infix(Valuelist,",", infix(Env,",",Env)))))
+  | prefix("EqAtom", paren("(",infix(Atom,",",Atom)))
+  | prefix("NeqAtom", paren("(",infix(Atom,",",Atom)))
+  | prefix("Assoc", paren("(",infix(Var,",", infix(Env,",",SexpOrFun))))
+  
+  | infix(Env,":","Env")
+  | infix(Form,":","Form")
+  | infix(Const,":","Const")
+  | infix(Var,":","Var")
+  | infix(Consf,":","ConsF")
+  | infix(Carf,":","CarF")
+  | infix(Cdrf,":","CdrF")
+  | infix(Atomf,":","AtomF")
+  | infix(Eqf,":","EqF")
+  | infix(Appf,":","AppF")
+  | infix(Cond,":","Cond")
+  | infix(catch(Fun),":","Fun")
+  | infix(Formlist,":","FormList")
+  | infix(Varlist,":","VarList")
+  | infix(Clist,":","CList")
+  | infix(catch(Atom), ":", "Atom")
+  | infix(Sexp, ":", "Sexp")
+  | throw "＞%s＝反Eval匹反丐曰引六氏. "
+  ;
+
+  Number ::= varref
+  | "1" | "2" | "3" | "4"
+  ;
+  Env ::= varref
+  | paren("(", empty)
+  | paren("(", infix(paren("(", infix(Var,".",SexpOrFun)), ".", Env))
+  ;; EVAL definition
+  | "Eenv" & eval $(ParseString
+"((EVAL. (LAMBDA,(E.(A.())), (COND.
+ (((ATOM,E), (ASSOC.(E.(A.())))).
+ (((ATOM,(CAR,E)), (COND.
+  (((EQ,(CAR,E),(QUOTE,QUOTE)), (CAR,(CDR,E))).
+  (((EQ,(CAR,E),(QUOTE,ATOM)), (ATOM,(EVAL.((CAR,(CDR,E)).(A.()))))).
+  (((EQ,(CAR,E),(QUOTE,EQ)), (EQ,(EVAL.((CAR,(CDR,E)).(A.()))),
+                                 (EVAL.((CAR,(CDR,(CDR,E))).(A.()))))).
+  (((EQ,(CAR,E),(QUOTE,COND)), (EVCON.((CDR,E).(A.())))).
+  (((EQ,(CAR,E),(QUOTE,CAR)), (CAR,(EVAL.((CAR,(CDR,E)).(A.()))))).
+  (((EQ,(CAR,E),(QUOTE,CDR)), (CDR,(EVAL.((CAR,(CDR,E)).(A.()))))).
+  (((EQ,(CAR,E),(QUOTE,CONS)), (CONS,(EVAL.((CAR,(CDR,E)).(A.()))),
+                                     (EVAL.((CAR,(CDR,(CDR,E))).
+                                            (A.()))))).
+  (((QUOTE,T), (EVAL.((CONS,(ASSOC.((CAR,E).(A.()))),(CDR,E)).(A.())))).
+  ())))))))))).
+ (((EQ,(CAR,(CAR,E)),(QUOTE,LABEL)),
+     (EVAL.((CONS,(CAR,(CDR,(CDR,(CAR,E)))),(CDR,E)).
+           ((CONS,(CONS,(CAR,(CDR,(CAR,E))),(CAR,E)),A).())))).
+ (((EQ,(CAR,(CAR,E)),(QUOTE,LAMBDA)),
+     (EVAL.((CAR,(CDR,(CDR,(CAR,E)))).
+           ((APPEND.((PAIR.((CAR,(CDR,(CAR,E))).
+                            ((EVLIS.((CDR,E).(A.()))).()))).
+                     (A.()))).())))).()))))))).
+ 
+((ASSOC. (LAMBDA,(X.(Y.())),(COND.
+     (((EQ,(CAR,(CAR,Y)),X), (CAR,(CDR,(CAR,Y)))).
+     (((QUOTE,T), (ASSOC.(X.((CDR,Y).())))).
+     ()))))).
+((APPEND. (LAMBDA,(X.(Y.())),(COND.
+     (((NULL.(X.())), Y).
+     (((QUOTE,T), (CONS,(CAR,X),(APPEND.((CDR,X).(Y.()))))).
+     ()))))).
+((PAIR. (LAMBDA,(X.(Y.())),(COND.
+     (((AND.((NULL.(X.())).((NULL.(Y.())).()))), (QUOTE,())).
+     (((AND.((NOT.((ATOM,X).())).((NOT.((ATOM,Y).())).()))),
+        (CONS,(CONS,(CAR,X),(CAR,Y)),(PAIR.((CDR,X).((CDR,Y).()))))).
+     ()))))).
+((NULL. (LAMBDA,(X.()),(AND.((ATOM,X).((EQ,X,(QUOTE,())).()))))).
+((AND. (LAMBDA,(X.(Y.())),(COND.
+     (((EQ,X,(QUOTE,T)), (EQ,Y,(QUOTE,T))).
+     (((QUOTE,T), (QUOTE,F)).
+     ()))))).
+((NOT. (LAMBDA,(X.()),(COND.
+     (((EQ,X,(QUOTE,T)), (QUOTE,F)).
+     (((EQ,X,(QUOTE,F)), (QUOTE,T)).
+     ()))))).
+((EVCON. (LAMBDA,(C.(A.())),(COND.
+     (((EVAL.((CAR,(CAR,C)).(A.()))),
+        (EVAL.((CAR,(CDR,(CAR,C))).(A.())))).
+     (((QUOTE,T), (EVCON.((CDR,C).(A.())))).
+     ()))))).
+((EVLIS. (LAMBDA,(M.(A.())),(COND.
+     (((NULL.(M.())), (QUOTE,())).
+     (((QUOTE,T), (CONS,(EVAL.((CAR,M).(A.()))),(EVLIS.((CDR,M).(A.()))))).
+     ()))))).())))))))))" 'Env)
+  | "EenvConst" & eval $(ParseString
+"((E.(QUOTE.(v.()))).((A.a).Eenv))" 'Env)
+  ;
+  SexpOrFun ::= varref
+  | Sexp | catch(Fun)
+  ;
+  Value ::= varref
+  | Sexp
+  ;
+  Valuelist ::= varref
+  | paren("(", empty)
+  | paren("(", infix(Value,".",Valuelist))
+  ;
+  VorVlist ::= varref
+  | Value | Valuelist
+  ;
+  Form ::= varref
+  | Const | Var | Consf | Carf | Cdrf | Atomf | Eqf | Appf | Cond
+  ;
+  Form2 ::= varref
+  | Form | Formlist | Clist | paren("(", infix(catch(Fun),",",Valuelist))
+  ;
+  Const ::= varref
+  | paren("(", infix("QUOTE",",",Sexp))
+  ;
+  Var ::= varref
+  | catch(Atom)
+  ;
+  Consf ::= varref
+  | paren("(", infix("CONS",",", infix(Form,",",Form)))
+  ;
+  Carf ::= varref
+  | paren("(", infix("CAR",",",Form))
+  ;
+  Cdrf ::= varref
+  | paren("(", infix("CDR",",",Form))
+  ;
+  Atomf ::= varref
+  | paren("(", infix("ATOM",",",Form))
+  ;
+  Eqf ::= varref
+  | paren("(", infix("EQ",",", infix(Form,",", Form)))
+  ;
+  Appf ::= varref
+  | paren("(", infix(catch(Fun),".",Formlist))
+  ;
+  Cond ::= varref
+  | paren("(", infix("COND",".",Clist))
+  ;
+  Fun ::= varref
+  | paren("(", infix("LAMBDA",",", infix(Varlist,",",Form)))
+  | paren("(", infix("LABEL",",", infix(Var,",",catch(Fun))))
+  | "Efun" & eval $(ParseString
+"(LAMBDA,(E.(A.())), (COND.
+ (((ATOM,E), (ASSOC.(E.(A.())))).
+ (((ATOM,(CAR,E)), (COND.
+  (((EQ,(CAR,E),(QUOTE,QUOTE)), (CAR,(CDR,E))).
+  (((EQ,(CAR,E),(QUOTE,ATOM)), (ATOM,(EVAL.((CAR,(CDR,E)).(A.()))))).
+  (((EQ,(CAR,E),(QUOTE,EQ)), (EQ,(EVAL.((CAR,(CDR,E)).(A.()))),
+                                 (EVAL.((CAR,(CDR,(CDR,E))).(A.()))))).
+  (((EQ,(CAR,E),(QUOTE,COND)), (EVCON.((CDR,E).(A.())))).
+  (((EQ,(CAR,E),(QUOTE,CAR)), (CAR,(EVAL.((CAR,(CDR,E)).(A.()))))).
+  (((EQ,(CAR,E),(QUOTE,CDR)), (CDR,(EVAL.((CAR,(CDR,E)).(A.()))))).
+  (((EQ,(CAR,E),(QUOTE,CONS)), (CONS,(EVAL.((CAR,(CDR,E)).(A.()))),
+                                     (EVAL.((CAR,(CDR,(CDR,E))).
+                                            (A.()))))).
+  (((QUOTE,T), (EVAL.((CONS,(ASSOC.((CAR,E).(A.()))),(CDR,E)).(A.())))).
+  ())))))))))).
+ (((EQ,(CAR,(CAR,E)),(QUOTE,LABEL)),
+     (EVAL.((CONS,(CAR,(CDR,(CDR,(CAR,E)))),(CDR,E)).
+           ((CONS,(CONS,(CAR,(CDR,(CAR,E))),(CAR,E)),A).())))).
+ (((EQ,(CAR,(CAR,E)),(QUOTE,LAMBDA)),
+     (EVAL.((CAR,(CDR,(CDR,(CAR,E)))).
+           ((APPEND.((PAIR.((CAR,(CDR,(CAR,E))).
+                            ((EVLIS.((CDR,E).(A.()))).()))).
+                     (A.()))).())))).()))))))" 'Fun)
+  | Var & eval
+  $(if (let ((a (second TREE)))
+    (and (atomp TREE) (not (equal a "QUOTE")) (not (equal a "CONS"))
+     (not (equal a "CAR")) (not (equal a "CDR")) (not (equal a "ATOM"))
+     (not (equal a "EQ"))))
+    TREE
+    (throw 'err (list 'err nil "楮醒匹反丐曰引六氏. ")))
+  ;
+  Formlist ::= varref
+  | paren("(", empty)
+  | paren("(", infix(Form,".",Formlist))
+  ;
+  Varlist ::= varref
+  | paren("(", empty)
+  | paren("(", infix(Var,".",Varlist))
+  ;
+  Clist ::= varref
+  | paren("(", empty)
+  | paren("(", infix(paren("(", infix(Form,",",Form)),".",Clist))
+  | "Ecl1" & eval $(ParseString
+"(((ATOM,E), (ASSOC.(E.(A.())))).
+ (((ATOM,(CAR,E)), (COND.
+  (((EQ,(CAR,E),(QUOTE,QUOTE)), (CAR,(CDR,E))).
+  (((EQ,(CAR,E),(QUOTE,ATOM)), (ATOM,(EVAL.((CAR,(CDR,E)).(A.()))))).
+  (((EQ,(CAR,E),(QUOTE,EQ)), (EQ,(EVAL.((CAR,(CDR,E)).(A.()))),
+                                 (EVAL.((CAR,(CDR,(CDR,E))).(A.()))))).
+  (((EQ,(CAR,E),(QUOTE,COND)), (EVCON.((CDR,E).(A.())))).
+  (((EQ,(CAR,E),(QUOTE,CAR)), (CAR,(EVAL.((CAR,(CDR,E)).(A.()))))).
+  (((EQ,(CAR,E),(QUOTE,CDR)), (CDR,(EVAL.((CAR,(CDR,E)).(A.()))))).
+  (((EQ,(CAR,E),(QUOTE,CONS)), (CONS,(EVAL.((CAR,(CDR,E)).(A.()))),
+                                     (EVAL.((CAR,(CDR,(CDR,E))).
+                                            (A.()))))).
+  (((QUOTE,T), (EVAL.((CONS,(ASSOC.((CAR,E).(A.()))),(CDR,E)).(A.())))).
+  ())))))))))).
+ (((EQ,(CAR,(CAR,E)),(QUOTE,LABEL)),
+     (EVAL.((CONS,(CAR,(CDR,(CDR,(CAR,E)))),(CDR,E)).
+           ((CONS,(CONS,(CAR,(CDR,(CAR,E))),(CAR,E)),A).())))).
+ (((EQ,(CAR,(CAR,E)),(QUOTE,LAMBDA)),
+     (EVAL.((CAR,(CDR,(CDR,(CAR,E)))).
+           ((APPEND.((PAIR.((CAR,(CDR,(CAR,E))).
+                            ((EVLIS.((CDR,E).(A.()))).()))).
+                     (A.()))).())))).()))))" 'Clist)
+  | "Ecl2" & eval $(ParseString
+"(((ATOM,(CAR,E)), (COND.
+  (((EQ,(CAR,E),(QUOTE,QUOTE)), (CAR,(CDR,E))).
+  (((EQ,(CAR,E),(QUOTE,ATOM)), (ATOM,(EVAL.((CAR,(CDR,E)).(A.()))))).
+  (((EQ,(CAR,E),(QUOTE,EQ)), (EQ,(EVAL.((CAR,(CDR,E)).(A.()))),
+                                 (EVAL.((CAR,(CDR,(CDR,E))).(A.()))))).
+  (((EQ,(CAR,E),(QUOTE,COND)), (EVCON.((CDR,E).(A.())))).
+  (((EQ,(CAR,E),(QUOTE,CAR)), (CAR,(EVAL.((CAR,(CDR,E)).(A.()))))).
+  (((EQ,(CAR,E),(QUOTE,CDR)), (CDR,(EVAL.((CAR,(CDR,E)).(A.()))))).
+  (((EQ,(CAR,E),(QUOTE,CONS)), (CONS,(EVAL.((CAR,(CDR,E)).(A.()))),
+                                     (EVAL.((CAR,(CDR,(CDR,E))).
+                                            (A.()))))).
+  (((QUOTE,T), (EVAL.((CONS,(ASSOC.((CAR,E).(A.()))),(CDR,E)).(A.())))).
+  ())))))))))).
+ (((EQ,(CAR,(CAR,E)),(QUOTE,LABEL)),
+     (EVAL.((CONS,(CAR,(CDR,(CDR,(CAR,E)))),(CDR,E)).
+           ((CONS,(CONS,(CAR,(CDR,(CAR,E))),(CAR,E)),A).())))).
+ (((EQ,(CAR,(CAR,E)),(QUOTE,LAMBDA)),
+     (EVAL.((CAR,(CDR,(CDR,(CAR,E)))).
+           ((APPEND.((PAIR.((CAR,(CDR,(CAR,E))).
+                            ((EVLIS.((CDR,E).(A.()))).()))).
+                     (A.()))).())))).())))" 'Clist)
+  | "Ecl21" & eval $(ParseString
+"(((EQ,(CAR,E),(QUOTE,QUOTE)), (CAR,(CDR,E))).
+  (((EQ,(CAR,E),(QUOTE,ATOM)), (ATOM,(EVAL.((CAR,(CDR,E)).(A.()))))).
+  (((EQ,(CAR,E),(QUOTE,EQ)), (EQ,(EVAL.((CAR,(CDR,E)).(A.()))),
+                                 (EVAL.((CAR,(CDR,(CDR,E))).(A.()))))).
+  (((EQ,(CAR,E),(QUOTE,COND)), (EVCON.((CDR,E).(A.())))).
+  (((EQ,(CAR,E),(QUOTE,CAR)), (CAR,(EVAL.((CAR,(CDR,E)).(A.()))))).
+  (((EQ,(CAR,E),(QUOTE,CDR)), (CDR,(EVAL.((CAR,(CDR,E)).(A.()))))).
+  (((EQ,(CAR,E),(QUOTE,CONS)), (CONS,(EVAL.((CAR,(CDR,E)).(A.()))),
+                                     (EVAL.((CAR,(CDR,(CDR,E))).
+                                            (A.()))))).
+  (((QUOTE,T), (EVAL.((CONS,(ASSOC.((CAR,E).(A.()))),(CDR,E)).(A.())))).
+  ()))))))))" 'Clist)
+  | "Ecl22" & eval $(ParseString
+"(((EQ,(CAR,E),(QUOTE,ATOM)), (ATOM,(EVAL.((CAR,(CDR,E)).(A.()))))).
+  (((EQ,(CAR,E),(QUOTE,EQ)), (EQ,(EVAL.((CAR,(CDR,E)).(A.()))),
+                                 (EVAL.((CAR,(CDR,(CDR,E))).(A.()))))).
+  (((EQ,(CAR,E),(QUOTE,COND)), (EVCON.((CDR,E).(A.())))).
+  (((EQ,(CAR,E),(QUOTE,CAR)), (CAR,(EVAL.((CAR,(CDR,E)).(A.()))))).
+  (((EQ,(CAR,E),(QUOTE,CDR)), (CDR,(EVAL.((CAR,(CDR,E)).(A.()))))).
+  (((EQ,(CAR,E),(QUOTE,CONS)), (CONS,(EVAL.((CAR,(CDR,E)).(A.()))),
+                                     (EVAL.((CAR,(CDR,(CDR,E))).
+                                            (A.()))))).
+  (((QUOTE,T), (EVAL.((CONS,(ASSOC.((CAR,E).(A.()))),(CDR,E)).(A.())))).
+  ())))))))" 'Clist)
+  | "Ecl23" & eval $(ParseString
+"(((EQ,(CAR,E),(QUOTE,EQ)), (EQ,(EVAL.((CAR,(CDR,E)).(A.()))),
+                                 (EVAL.((CAR,(CDR,(CDR,E))).(A.()))))).
+  (((EQ,(CAR,E),(QUOTE,COND)), (EVCON.((CDR,E).(A.())))).
+  (((EQ,(CAR,E),(QUOTE,CAR)), (CAR,(EVAL.((CAR,(CDR,E)).(A.()))))).
+  (((EQ,(CAR,E),(QUOTE,CDR)), (CDR,(EVAL.((CAR,(CDR,E)).(A.()))))).
+  (((EQ,(CAR,E),(QUOTE,CONS)), (CONS,(EVAL.((CAR,(CDR,E)).(A.()))),
+                                     (EVAL.((CAR,(CDR,(CDR,E))).
+                                            (A.()))))).
+  (((QUOTE,T), (EVAL.((CONS,(ASSOC.((CAR,E).(A.()))),(CDR,E)).(A.())))).
+  ()))))))" 'Clist)
+  | "Ecl24" & eval $(ParseString
+"(((EQ,(CAR,E),(QUOTE,COND)), (EVCON.((CDR,E).(A.())))).
+  (((EQ,(CAR,E),(QUOTE,CAR)), (CAR,(EVAL.((CAR,(CDR,E)).(A.()))))).
+  (((EQ,(CAR,E),(QUOTE,CDR)), (CDR,(EVAL.((CAR,(CDR,E)).(A.()))))).
+  (((EQ,(CAR,E),(QUOTE,CONS)), (CONS,(EVAL.((CAR,(CDR,E)).(A.()))),
+                                     (EVAL.((CAR,(CDR,(CDR,E))).
+                                            (A.()))))).
+  (((QUOTE,T), (EVAL.((CONS,(ASSOC.((CAR,E).(A.()))),(CDR,E)).(A.())))).
+  ())))))" 'Clist)
+  | "Ecl25" & eval $(ParseString
+"(((EQ,(CAR,E),(QUOTE,CAR)), (CAR,(EVAL.((CAR,(CDR,E)).(A.()))))).
+  (((EQ,(CAR,E),(QUOTE,CDR)), (CDR,(EVAL.((CAR,(CDR,E)).(A.()))))).
+  (((EQ,(CAR,E),(QUOTE,CONS)), (CONS,(EVAL.((CAR,(CDR,E)).(A.()))),
+                                     (EVAL.((CAR,(CDR,(CDR,E))).
+                                            (A.()))))).
+  (((QUOTE,T), (EVAL.((CONS,(ASSOC.((CAR,E).(A.()))),(CDR,E)).(A.())))).
+  ()))))" 'Clist)
+  | "Ecl26" & eval $(ParseString
+"(((EQ,(CAR,E),(QUOTE,CDR)), (CDR,(EVAL.((CAR,(CDR,E)).(A.()))))).
+  (((EQ,(CAR,E),(QUOTE,CONS)), (CONS,(EVAL.((CAR,(CDR,E)).(A.()))),
+                                     (EVAL.((CAR,(CDR,(CDR,E))).
+                                            (A.()))))).
+  (((QUOTE,T), (EVAL.((CONS,(ASSOC.((CAR,E).(A.()))),(CDR,E)).(A.())))).
+  ())))" 'Clist)
+  | "Ecl27" & eval $(ParseString
+"(((EQ,(CAR,E),(QUOTE,CONS)), (CONS,(EVAL.((CAR,(CDR,E)).(A.()))),
+                                     (EVAL.((CAR,(CDR,(CDR,E))).
+                                            (A.()))))).
+  (((QUOTE,T), (EVAL.((CONS,(ASSOC.((CAR,E).(A.()))),(CDR,E)).(A.())))).
+  ()))" 'Clist)
+  | "Ecl28" & eval $(ParseString
+"(((QUOTE,T), (EVAL.((CONS,(ASSOC.((CAR,E).(A.()))),(CDR,E)).(A.())))).
+  ())" 'Clist)
+  | "Ecl3" & eval $(ParseString
+"(((EQ,(CAR,(CAR,E)),(QUOTE,LABEL)),
+     (EVAL.((CONS,(CAR,(CDR,(CDR,(CAR,E)))),(CDR,E)).
+           ((CONS,(CONS,(CAR,(CDR,(CAR,E))),(CAR,E)),A).())))).
+ (((EQ,(CAR,(CAR,E)),(QUOTE,LAMBDA)),
+     (EVAL.((CAR,(CDR,(CDR,(CAR,E)))).
+           ((APPEND.((PAIR.((CAR,(CDR,(CAR,E))).
+                            ((EVLIS.((CDR,E).(A.()))).()))).
+                     (A.()))).())))).()))" 'Clist)
+  | "Ecl4" & eval $(ParseString
+"(((EQ,(CAR,(CAR,E)),(QUOTE,LAMBDA)),
+     (EVAL.((CAR,(CDR,(CDR,(CAR,E)))).
+           ((APPEND.((PAIR.((CAR,(CDR,(CAR,E))).
+                            ((EVLIS.((CDR,E).(A.()))).()))).
+                     (A.()))).())))).())" 'Clist)
+  ;
+  Sexp ::= varref
+  | paren("(", empty)
+  | catch(Atom)
+  | paren("(", infix(Sexp,".",Sexp))
+  ;
+  Atom ::= varref
+  | op & eval
+  $(if (atomp TREE)
+    TREE
+    (throw 'err (list 'err nil "失玄丞匹反丐曰引六氏. ")))
+  ;
+]
+
+rules[
+  "Ⅶ-I"(p,q):     pⅦq :- p 卄 q ;
+  "Ⅶ-E"(p,q):        q :- pⅦq, p ;
+  "十-I"(p):        十p :- p 卄 Ｏ ;
+  "十-E"(p):         Ｏ :- 十p, p ;
+  "〨-I"(p,q):     p〨q :- p,q ;
+  "〨-EL"(p,q):       p :- p〨q ;
+  "〨-ER"(p,q):       q :- p〨q ;
+  "〩-IL"(p,q):    p〩q :- p ;
+  "〩-IR"(p,q):    p〩q :- q ;
+  "〩-E"(p,q,r):      r :- p〩q, p 卄 r, q 卄 r ;
+  "Ｏ-I"(p):           Ｏ :- (x)[x] ;
+  "Ｏ-E"(p):           p :- Ｏ ;
+  "卄-E"(p,q):		q :- p卄q, p ;
+  "U-E"(p,a):		p[a] :- (x)[p[x]] ;
+
+  "EvForm"(e,a,v):
+      EvalForm(e,a,v) :- e:Form, a:Env, Eval(e,a,v) ;
+  "EvConst"(a,v): 
+      Eval((QUOTE,v),a,v) :- ;
+  "EvVar"(x,a,v):
+      Eval(x,a,v) :- Assoc(x,a,v) ;
+   "AssocT"(x,a,v): Assoc(x,((x.v).a),v) :- ;
+   "AssocF"(x,y,w,a,v): 
+      Assoc(x,((y.w).a),v) :- NeqAtom(x,y), Assoc(x,a,v) ;
+  "EvCons"(e1,e2,a,v1,v2,d1,d2):
+      Eval((CONS,e1,e2),a,(v1.v2))
+       :- Eval(e1,a,v1), Eval(e2,a,v2) ;
+  "EvCar"(e,a,v1,v2,d): 
+      Eval((CAR,e),a,v1) :- Eval(e,a,(v1.v2)) ;
+  "EvCdr"(e,a,v1,v2,d): 
+      Eval((CDR,e),a,v2) :- Eval(e,a,(v1.v2)) ;
+  "EvAtomT"(e,a,v,d): 
+      Eval((ATOM,e),a,T) :- Eval(e,a,v), v:Atom ;
+  "EvAtomF"(e,a,v1,v2,d): 
+      Eval((ATOM,e),a,F) :- Eval(e,a,(v1.v2)) ;
+  "EvEqT"(e1,e2,a,v1,v2,d1,d2): 
+       Eval((EQ,e1,e2),a,T)
+       :- Eval(e1,a,v1), Eval(e2,a,v2), EqAtom(v1,v2) ;
+  "EvEqF"(e1,e2,a,v1,v2,d1,d2): 
+       Eval((EQ,e1,e2),a,F) :- Eval(e1,a,v1), Eval(e2,a,v2), NeqAtom(v1,v2) ;
+  "EvApp"(f,el,a,v,vl,d1,d2): 
+       Eval((f.el),a,v) :- EvArgs(el,a,vl), Apply((f,vl),a,v) ;
+   "EvArgsN"(a,d): EvArgs((),a,()) :- ;
+   "EvArgs"(e,el,a,v,vl,d1,d2): 
+       EvArgs((e.el),a,(v.vl)) :- Eval(e,a,v), EvArgs(el,a,vl) ;
+   "AppVar"(x,vl,a,v,f,d): 
+       Apply((x,vl),a,v)
+       :- x:Var, Assoc(x,a,f), f:Fun, Apply((f,vl),a,v) ;
+   "AppLam"(xl,e,vl,v,a,b,d): 
+       Apply(((LAMBDA,xl,e),vl),a,v)
+       :- PairUp(xl,vl,a,b), Eval(e,b,v) ;
+   "AppLab"(x,f,vl,v,a,d): 
+       Apply(((LABEL,x,f),vl),a,v)
+       :- Apply((f,vl),((x.f).a),v) ;
+   "PairUpN"(a): PairUp((),(),a,a) :- ;
+   "PairUp"(x,xl,v,vl,a,b): PairUp((x.xl),(v.vl),a,((x.v).b))
+       :- PairUp(xl,vl,a,b) ;
+  "EvCond"(l,a,v,d): 
+       Eval((COND.l),a,v) :- EvCList(l,a,v) ;
+   "EvCListN"(a): EvCList((),a,()) :- ;
+   "EvCListT"(c,e,l,a,v,d1,d2): 
+       EvCList(((c,e).l),a,v) :- Eval(c,a,T), Eval(e,a,v) ;
+   "EvCListF"(c,e,l,a,v,d1,d2): 
+       EvCList(((c,e).l),a,v) :- Eval(c,a,F), EvCList(l,a,v) ;
+  "EqAtom"(a1,a2): EqAtom(a1,a2) :- $(and (atomp a1) 
+       (atomp a2) (equal (second a1) (second a2))) ;
+  "NeqAtom"(a1,a2): NeqAtom(a1,a2) :- $(and (atomp a1)
+       (atomp a2) (not (equal (second a1) (second a2)))) ;
+
+  "TConst"(e): e:Const :- $(constp e) ;
+  "TVar"(s): s:Var :- $(varp s) ;
+  "TConsF"(e): e:ConsF :- $(consfp e) ;
+  "TCarF"(e): e:CarF :- $(carfp e) ;
+  "TCdrF"(e): e:CdrF :- $(cdrfp e) ;
+  "TAtomF"(e): e:AtomF :- $(atomfp e) ;
+  "TEqF"(e): e:EqF :- $(eqfp e) ;
+  "TAppF"(e): e:AppF :- $(appfp e) ;
+  "TCond"(e): e:Cond :- $(condp e) ;
+  "TFun"(f): f:Fun :- $(funp f) ;
+  "TSexp"(s): s:Sexp :- $(sexpp s) ;
+  "TAtom"(a): a:Atom :- $(atomp a) ;
+
+  "member1"(a,b): member(a,(a.b)) :- a:Sexp, b:Sexp ;
+  "member2"(a,b,c): member(a,(b.c)) :- member(a,c), b:Sexp ;
+
+  "Ev1-I"(e,a,v): Ev(1,e,a,v) :- Eval(e,a,v) ;
+  "Ev2-I"(e,a,v): Ev(2,e,a,v) :- EvArgs(e,a,v) ;
+  "Ev3-I"(f,vl,a,v): Ev(3,(f,vl),a,v) :- Apply((f,vl),a,v) ;
+  "Ev4-I"(l,a,v): Ev(4,l,a,v) :- EvCList(l,a,v) ;
+  "Ev1-E"(e,a,v): Eval(e,a,v) :- Ev(1,e,a,v) ;
+  "Ev2-E"(e,a,v): EvArgs(e,a,v) :- Ev(2,e,a,v) ;
+  "Ev3-E"(f,vl,a,v): Apply((f,vl),a,v) :- Ev(3,(f,vl),a,v) ;
+  "Ev4-E"(l,a,v): EvCList(l,a,v) :- Ev(4,l,a,v) ;
+
+  "P1-I"(e,a,v):
+    P[1,e,a,v] :-Eval((EVAL.((QUOTE,e).((QUOTE,a).()))),Eenv,v) ;
+  "P2-I"(e,a,v):
+    P[2,e,a,v] :- Eval((EVLIS.((QUOTE,e).((QUOTE,a).()))),Eenv,v) ;
+  "P3-I"(e,a,v):
+    P[3,e,a,v] :- Ev(3,e,a,v) ;
+  "P4-I"(e,a,v):
+    P[4,e,a,v] :- Eval((EVCON.((QUOTE,e).((QUOTE,a).()))),Eenv,v) ;
+  "P1-E"(e,a,v):
+    Eval((EVAL.((QUOTE,e).((QUOTE,a).()))),Eenv,v) :- P[1,e,a,v] ;
+  "P2-E"(e,a,v):
+    Eval((EVLIS.((QUOTE,e).((QUOTE,a).()))),Eenv,v) :- P[2,e,a,v] ;
+  "P3-E"(e,a,v):
+    Ev(3,e,a,v) :- P[3,e,a,v] ;
+  "P4-E"(e,a,v):
+    Eval((EVCON.((QUOTE,e).((QUOTE,a).()))),Eenv,v) :- P[4,e,a,v] ;
+
+   "ind1"(p):
+  (n,e,a,v)[Ev(n,e,a,v)卄p[n,e,a,v]] :-
+    (a,v)[p[1,(QUOTE,v),a,v]],
+    (x,a,v)[Assoc(x,a,v)卄p[1,x,a,v]],
+    (e1,e2,a,v1,v2)
+      [p[1,e1,a,v1]卄p[1,e2,a,v2]卄p[1,(CONS,e1,e2),a,(v1.v2)]],
+    (e,a,v1,v2)[p[1,e,a,(v1.v2)]卄p[1,(CAR,e),a,v1]],
+    (e,a,v1,v2)[p[1,e,a,(v1.v2)]卄p[1,(CDR,e),a,v2]],
+    (e,a,v)[p[1,e,a,v]卄v:Atom卄p[1,(ATOM,e),a,T]],
+    (e,a,v1,v2)[p[1,e,a,(v1.v2)]卄p[1,(ATOM,e),a,F]],
+    (e1,e2,a,v1,v2)
+      [p[1,e1,a,v1]卄p[1,e2,a,v2]卄EqAtom(v1,v2)
+        卄p[1,(EQ,e1,e2),a,T]],
+    (e1,e2,a,v1,v2)
+      [p[1,e1,a,v1]卄p[1,e2,a,v2]卄NeqAtom(v1,v2)
+        卄p[1,(EQ,e1,e2),a,F]],
+    (el,a,v,vl,f)
+      [p[2,el,a,vl]卄p[3,(f,vl),a,v]卄p[1,(f.el),a,v]],
+    (cl,a,v)
+      [p[4,cl,a,v]卄p[1,(COND.cl),a,v]],
+    (a)[p[2,(),a,()]],
+    (e,el,a,v,vl)
+      [p[1,e,a,v]卄p[2,el,a,vl]卄p[2,(e.el),a,(v.vl)]],
+    (x,a,v,vl,f)
+      [x:Var卄Assoc(x,a,f)卄f:Fun卄p[3,(f,vl),a,v]卄
+        p[3,(x,vl),a,v]],
+    (e,xl,a,b,v,vl)
+      [PairUp(xl,vl,a,b)卄p[e,b,v]卄p[3,((LAMBDA,xl,e),vl),a,v]],
+    (x,a,v,vl,f)
+      [p[3,(f,vl),((x.f).a),v]卄p[3,((LABEL,x,f),vl),a,v]],
+    (a)[p[4,(),a,()]],
+    (e,a,v,c,cl)
+      [p[1,c,a,T]卄p[1,e,a,v]卄p[4,((c,e).cl),a,v]],
+    (e,a,v,c,cl)
+      [p[1,c,a,F]卄p[4,cl,a,v]卄p[4,((c,e).cl),a,v]],
+
+    (a)[p[2,(),a,()]],
+    (e,el,a,v,vl)
+      [p[1,e,a,v]卄p[2,el,a,vl]卄p[2,(e.el),a,(v.vl)]],
+
+    (x,f,a,v,vl)
+      [x:Var卄Assoc(x,a,v)卄f:Fun卄p[3,(f,vl),a,v]
+        卄p[3,(x,vl),a,v]],
+    (xl,e,a,b,v,vl)
+      [PairUp(xl,vl,a,b)卄p[1,e,b,v]
+        卄p[3,((LAMBDA,xl,e),vl),a,v]],
+    (x,f,a,v,vl)
+      [p[3,(f,vl),((x.f).a),v]卄p[3,((LABEL,x,f),vl),a,v]],
+
+    (a)[p[4,(),a,()]],
+    (c,e,a,v,l)
+      [p[1,c,a,T]卄p[1,e,a,v]卄p[4,((c,e).l),a,v]],
+    (c,e,a,v,l)
+      [p[1,c,a,F]卄p[4,l,a,v]卄p[4,((c,e).l),a,v]] ;
+]

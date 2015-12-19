@@ -1,0 +1,202 @@
+;; Derivation Game LambdaTermRed:
+;; defined by Masahiko Sato at Thu Nov 20 21:46:27 2003
+;; defined by Masahiko Sato at Sun Nov  2 13:00:49 2003
+;; defined by Masahiko Sato at Wed Feb 19 12:01:18 2003
+;; defined by Masahiko Sato at Wed Feb 12 23:38:33 2003
+;; defined by Masahiko Sato at Sun Jan 26 12:35:51 2003
+;; defined by Masahiko Sato at Wed Jan  8 23:49:07 2003
+;; defined by Masahiko Sato at Tue Jan  7 18:39:11 2003
+;; defined by Masahiko Sato at Fri Jan  3 15:42:11 2003
+;; defined by Masahiko Sato at Thu Jan  2 17:01:29 2003
+;; defined by Masahiko Sato at Tue Dec 31 22:14:11 2002
+
+tokens[
+
+  constant ::= "¢Ý" ;
+  operator ::=  "¢¿" | "¢Ê" | "¢Ë" | "¢Ì" | "¢º" | "¦Ë"
+  | "in0" | "abort" | "left" | "right" | "inl" | "inr" | "case"
+  | "c-inst" | "inst" | "red"
+  ;
+
+]
+
+syntax[
+  
+  bj ::= infix(term, "red", term)
+  | throw "¡Ö%s¡×¤Ï´ðËÜÈ½ÃÇ¤Ç¤Ï¤¢¤ê¤Þ¤»¤ó"
+  ;
+
+;; operators with weaker binding power comes first
+
+  prop ::= "¢Ý"
+  ;; the line below is for meta expression
+  | prefix(var, paren("[", list(prop, ",")))
+    & eval $(cons 'sapp TREE)
+  | varref
+  | paren("(", prop)
+  | paren("[", judgment)
+  | infixL(prop, "¢¿", prop)
+  | infixL(prop, "¢Ë", prop)
+  | infixL(prop, "¢Ê", prop)
+  | prefix("¢Ì", prop)
+  | throw "¡Ö%s¡×¤ÏÌ¿Âê¤Ç¤Ï¤¢¤ê¤Þ¤»¤ó"
+  ;
+
+  term ::= varref
+  ;; the line below is for meta expression used in problems
+  | catch(prefix(svar, paren("[", list(term, ","))))
+    & eval $(if cal-meta
+                (cons 'sapp TREE) ;; for meta check
+              (throw 'fail '(fail "Not in Meta-mode")))
+  | prefix("in0", paren("(", abs-term))
+  | prefix-c("abort", prefix(paren("(", prop), paren("(", term)))
+  | prefix("¦Ë", c-abs-term)
+  | catch(postfix(term, paren("(", term)))
+    & eval $(cons '(op "apply") TREE)
+  | paren("[", infix-i(term, ",", term))
+    & eval $(cons '(op "pair") TREE)
+  | prefix("left", paren("(", term))
+  | prefix("right", paren("(", term))
+  | prefix("inl", paren("(", term))
+  | prefix("inr", paren("(", term))
+  | prefix-c("case", paren("(", infix-ic(term, ",", infix-i(term, ",", term))))
+  | c-abs-term
+  | prefix-c("c-inst", paren("(", infix-i(term, ",", term)))
+  | prefix(paren("(", var), paren("[", term))
+    & eval $(let ((var (first TREE))
+                  (body (second TREE)))
+              (mAbs var body))
+  |  ;; for rules of derivation games
+     prefix(var, paren("[", list(term, ",")))
+     & eval $(cons 'sapp TREE)
+  | prefix-c("inst", paren("(", infix-i(term, ",", term)))
+  | paren("(", term)
+  | throw "¡Ö%s¡×¤Ï¹à¤Ç¤Ï¤¢¤ê¤Þ¤»¤ó"
+  ;
+
+  c-abs-term ::= varref
+  | paren("(", term)
+  | prefix(paren("(", infix(var, "¢º", prop)), paren("[", term))
+          & eval $(let ((var (second (first TREE)))
+                        (body (second TREE))
+                        (prop (third (first TREE))))
+                    (list '(op "c-abs") prop (mAbs var body))) ;
+
+  tex-bj ::= tex-infix(tex-term, "red", tex-term) ;
+
+  tex-prop ::= "¢Ý" & tex-op
+  ;; the line below is for meta expression
+  ;;|  tex-prefix(tex-var, tex-paren("[", tex-list(tex-prop, ",")))
+  |  ;; for rules of derivation games
+     ;; tex-prefix(tex-var, tex-paren("[", tex-list(tex-term, ",")))
+     ;; we modify above as below so as to convert "[" into "("
+     ;; we note that (ParseString "[abc]") = ((paren "[" (var "abc" 2)))
+     tex-prefix(tex-var, 
+                tex-paren("[", tex-list(tex-prop, ","))
+                & eval $(caltex-meta-apply token-list))
+  |  tex-varref
+  |  tex-paren("(", tex-prop)
+  |  tex-paren("[", tex-judgment)
+  |  tex-infixL(tex-prop, "¢¿", tex-prop)
+  |  tex-infixL(tex-prop, "¢Ë", tex-prop)
+  |  tex-infixL(tex-prop, "¢Ê", tex-prop)
+  |  tex-prefix("¢Ì", tex-prop)
+  ;
+  
+  tex-term ::= tex-varref
+  | tex-prefix("in0" & tex-op, tex-paren("(", tex-abs-term))
+  | tex-prefix("abort" & tex-op, 
+               tex-prefix(paren("(", tex-prop)
+                          & eval 
+                          $(list
+			    'sexp
+			    (concat
+			     "_{\\mbox{\\small $" (second TREE) "$}}")),
+                          tex-paren("(", tex-term)))
+  | tex-prefix("¦Ë" & tex-op, tex-c-abs-term)
+  | catch(tex-postfix(tex-term, tex-paren("(", tex-term)))
+  | tex-paren("[", tex-infix(tex-term, ",", tex-term))
+  | tex-prefix("left" & tex-op, tex-paren("(", tex-term))
+  | tex-prefix("right" & tex-op, tex-paren("(", tex-term))
+  | tex-prefix("inl" & tex-op, tex-paren("(", tex-term))
+  | tex-prefix("inr" & tex-op, tex-paren("(", tex-term))
+  | tex-prefix("case" & tex-op, 
+               tex-paren("(", 
+                         tex-infix(tex-term, ",", 
+                                   tex-infix(tex-term, ",", tex-term))))
+  | tex-c-abs-term
+  | tex-prefix("c-inst" & tex-op, 
+               tex-paren("(", tex-infix(tex-term, ",", tex-term)))
+  | tex-prefix(tex-paren("(", tex-var), tex-paren("[", tex-term))
+  |  ;; for rules of derivation games
+     ;; tex-prefix(tex-var, tex-paren("[", tex-list(tex-term, ",")))
+     ;; we modify above as below so as to convert "[" into "("
+     ;; we note that (ParseString "[abc]") = ((paren "[" (var "abc" 2)))
+     tex-prefix(tex-var, 
+                tex-paren("[", tex-list(tex-term, ","))
+                & eval $(caltex-meta-apply token-list))
+  | tex-prefix("inst" & tex-op, 
+               tex-paren("(", tex-infix(tex-term, ",", tex-term)))
+  | throw "¡Ö%s¡×¤Ï¹à¤Ç¤Ï¤¢¤ê¤Þ¤»¤ó"
+  ;
+
+  tex-c-abs-term ::= tex-varref
+  | tex-paren("(", tex-term)
+  | tex-prefix(tex-paren("(", tex-infix(tex-var, "¢º", tex-prop)), 
+               tex-paren("[", tex-term))
+  ;
+  
+  abs-term ::= varref
+  | prefix(paren("(", var), paren("[", term))
+    ;; (x)[a] is parsed into (x a)
+    & eval $(let ((var (first TREE)) (body (second TREE)))
+             (mAbs var body))
+  ;
+
+  tex-abs-term ::= tex-varref
+  |  tex-prefix(tex-paren("(", tex-var), tex-paren("[", tex-term))
+  ;
+
+]
+
+rules[
+
+  "left"(a,b): left([a, b]) red a :- ;
+  "right"(a,b): right([a, b]) red b :- ;
+  "apply"(A,b,a): ¦Ë(x¢ºA)[b[x]](a) red b[a] :- ;
+  "apply-base"(A,f,a): ¦Ëf(a) red c-inst(f,a) :- ;
+  "case-L"(A,B,a,b,c): case(inl(c), (x¢ºA)[a[x]], (y¢ºB)[b[y]]) red a[c] :- ;
+  "case-R"(A,B,a,b,c): case(inr(c), (x¢ºA)[a[x]], (y¢ºB)[b[y]]) red b[c] :- ;
+  "abort"(A,a): abort(A)(in0((x)[a[x]])) red a[A] :- ;
+  "abort-base"(A,a): abort(A)(in0(a)) red inst(a,A) :- ;
+  "c-inst"(A,b,a): c-inst((x¢ºA)[b[x]], a) red b[a] :- ;
+  "case-base-L"(a,f,g): case(inl(a),f,g) red c-inst(f, a) :- ;
+  "case-base-R"(b,f,g): case(inl(b),f,g) red c-inst(g, b) :- ;
+  "inst"(f,a): inst((x)[f[x]], a) red f[a] :- ;
+
+  "pair-cong-L"(a,b,c): [a,b] red [c,b] :- a red c ;
+  "pair-cong-R"(a,b,d): [a,b] red [a,d] :- b red d ;
+  "left-cong"(c,d): left(c) red left(d) :- c red d ;
+  "right-cong"(c,d): right(c) red right(d) :- c red d ;
+  "¦Ë-cong"(f,g): ¦Ëf red ¦Ëg :- f red g ;
+  "apply-cong-L"(f,g,a): f(a) red g(a) :- f red g ;
+  "apply-cong-R"(f,a,c): f(a) red f(c) :- a red c ;
+  "inl-cong"(a,c): inl(a) red inl(c) :- a red c ;
+  "inr-cong"(b,d): inr(b) red inr(d) :- b red d ;
+  "case-cong-1"(c,a,b,d): case(c, a, b) red case(d, a, b)
+      :- c red d ;
+  "case-cong-2"(c,a,b,d): case(c, a, b) red case(c, d, b)
+      :- a red d ;
+  "case-cong-3"(c,a,b,d): case(c, a, b) red case(c, a, d)
+      :- b red d ;
+  "in0-cong"(a,c): in0(a) red in0(c) :- a red c ;
+  "abort-cong"(A,a,c): abort(A)(a) red abort(A)(c) :- a red c ;
+  "cond-cong"(A,b,d): (x¢ºA)[b[x]] red (x¢ºA)[d[x]] :- ¦°(x)[b[x] red d[x]] ;
+  "c-inst-cong-L"(f,a,g): c-inst(f,a) red c-inst(g,a) :- f red g ;
+  "c-inst-cong-R"(f,a,c): c-inst(f,a) red c-inst(f,c) :- a red c ;
+  "univ-cong"(a,c): (x)[a[x]] red (x)[c[x]] :- ¦°(x)[a[x] red c[x]] ;
+  "inst-cong"(f,a,g): inst(f,a) red inst(g,a) :- f red g ;
+
+  "trans"(a,b,c): a red c :- a red b, b red c ;
+
+]

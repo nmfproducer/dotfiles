@@ -1,0 +1,33 @@
+(let (var-pat const-pat op-pat open-pat close-pat)
+   (setq const-pat '("Ｏ" "0" "Nat"))
+   (setq op-pat '("Ⅶ" "〨" "〩" "十" "Ａ" "Ｂ" "=" "S" "\\+" "\\*"))
+   (cal-deftokens))
+
+
+(DefClass 'bj '(or prop (throw "＞%s＝反湘呿�衛リリ洃═磥牏誘�")))
+
+
+(DefClass 'prop '(or "Ｏ" (and (prefix var (paren "[" (list term ","))) (eval (if cal-meta (cons (quote sapp) TREE) (throw (quote fail) (quote (fail "Not in Meta-mode")))))) varref (and svar (eval (if cal-meta TREE (throw (quote fail) (quote (fail "Not in Meta-mode")))))) (paren "(" prop) (paren "[" judgment) (and (prefix (or "Ａ" "Ｂ") (prefix (paren "(" var) (paren "[" prop))) (eval (let ((q (first TREE)) (var (first (second TREE))) (body (second (second TREE)))) (list q (mAbs var body))))) (infix prop "Ⅶ" prop) (infix prop "〩" prop) (infix prop "〨" prop) (prefix "十" prop) (and (prefix op (paren "(" (list term ","))) (commit (eval (let* ((op-str (second (first TREE))) (vars (second TREE)) (name (intern (concat cal-current-game ":" op-str))) def) (if (setq def (get name (quote cal-def))) (if (= (length vars) (length (first def))) TREE (throw (quote fail) (list (quote fail) (format "%s 及婁醒反 %s 蜊匹允" op-str (length (first def)))))) (throw (quote fail) (list (quote fail) (format "%s 反課賄午仄化爛聒今木化中引六氏" op-str)))))))) (infix term "=" term) (infix term ":" "Nat") (throw "＞%s＝反抰鎖匹反丐曰引六氏")))
+
+
+(DefClass 'term '(or varref (and (prefix var (paren "[" (list term ","))) (eval (if cal-meta (cons (quote sapp) TREE) (throw (quote fail) (quote (fail "Not in Meta-mode")))))) "0" (paren "(" term) (prefix "S" (paren "(" term)) (infixR term "+" term) (infixR term "*" term) (throw "＞%s＝反嫩匹反丐曰引六氏")))
+
+
+(DefClass 'rule-arg '(or (catch term) (and (prefix (paren "(" var) (paren "[" prop)) (eval (let ((var (first TREE)) (body (second TREE))) (mAbs var body))))))
+
+
+(DefClass 'tex-bj 'tex-prop)
+
+
+(DefClass 'tex-prop '(or (and "Ｏ" tex-op) (tex-prefix tex-var (and (tex-paren "[" (tex-list tex-term ",")) (eval (caltex-meta-apply token-list)))) tex-varref svar (tex-prefix tex-op (tex-paren "(" (tex-list tex-term ","))) (tex-paren "(" tex-prop) (tex-paren "[" tex-judgment) (tex-prefix (and (or "Ａ" "Ｂ") tex-op) (tex-prefix (tex-paren "(" tex-var) (tex-paren "[" tex-prop))) (tex-infix tex-prop "Ⅶ" tex-prop) (tex-infix tex-prop "〩" tex-prop) (tex-infix tex-prop "〨" tex-prop) (tex-prefix (and "十" tex-op) tex-prop) (tex-infix tex-term "=" tex-term) (throw "＞%s＝反抰鎖匹反丐曰引六氏")))
+
+
+(DefClass 'tex-term '(or tex-varref (and "0" tex-op) (tex-prefix tex-var (and (tex-paren "[" (tex-list tex-term ",")) (eval (caltex-meta-apply token-list)))) (tex-paren "(" tex-term) (tex-prefix (and "S" tex-op) (tex-paren "(" tex-term)) (tex-infix tex-term "+" tex-term) (tex-infix tex-term "*" tex-term) (throw "＞%s＝反嫩匹反丐曰引六氏")))
+
+
+(setq PrimExpPat PEP)
+
+(DefGame 'Arith '(("=-repl" (a b c) ((op "=" 867) (sapp (var "c" 863) ((var "a" 865))) (sapp (var "c" 868) ((var "b" 870)))) ((op "=" 877) (var "a" 876) (var "b" 878))) ("repl" (a b P) (sapp (var "P" 824) ((var "b" 826))) (sapp (var "P" 832) ((var "a" 834))) ((op "=" 839) (var "a" 838) (var "b" 840))) ("refl" (a) ((op "=" 799) (var "a" 798) (var "a" 800))) ("S-inj" (a b) ((op "=" 766) (var "a" 765) (var "b" 767)) ((op "=" 776) ((op "S" 772) (var "a" 774)) ((op "S" 777) (var "b" 779)))) ("*-S" (a b) ((op "=" 734) ((op "*" 729) (var "a" 728) ((op "S" 730) (var "b" 732))) ((op "+" 739) ((op "*" 736) (var "a" 735) (var "b" 737)) (var "a" 741)))) ("*-0" (a) ((op "=" 705) ((op "*" 703) (var "a" 702) (op "0" 704)) (op "0" 706))) ("+-S" (a b) ((op "=" 676) ((op "+" 671) (var "a" 670) ((op "S" 672) (var "b" 674))) ((op "S" 677) ((op "+" 680) (var "a" 679) (var "b" 681))))) ("+-0" (a) ((op "=" 647) ((op "+" 645) (var "a" 644) (op "0" 646)) (var "a" 648))) ("ind" (P) ((op "Ａ" 589) (Abs ((var "x" 591)) (() () (1)) (sapp (var "P" 594) ((var 0))))) (sapp (var "P" 603) ((op "0" 605))) (Abs ((var "k" 611)) (() (() () (1)) (() () ((() 1)))) ((op "卄" 618) (sapp (var "P" 614) ((var 0))) (sapp (var "P" 619) (((op "S" 621) (var 0))))))) ("Ｂ-E" (P Q) (var "Q" 544) ((op "Ｂ" 549) (Abs ((var "x" 551)) (() () (1)) (sapp (var "P" 554) ((var 0))))) (Abs ((var "x" 563)) (() (() () (1))) ((op "卄" 570) (sapp (var "P" 566) ((var 0))) (var "Q" 571)))) ("Ｂ-I" (P a) ((op "Ｂ" 508) (Abs ((var "x" 510)) (() () (1)) (sapp (var "P" 513) ((var 0))))) (sapp (var "P" 522) ((var "a" 524)))) ("Ａ-E" (P a) (sapp (var "P" 472) ((var "a" 474))) ((op "Ａ" 480) (Abs ((var "x" 482)) (() () (1)) (sapp (var "P" 485) ((var 0)))))) ("Ａ-I" (P) ((op "Ａ" 430) (Abs ((var "x" 432)) (() () (1)) (sapp (var "P" 435) ((var 0))))) (Abs ((var "x" 446)) (() () (1)) (sapp (var "P" 449) ((var 0))))) ("Ｏ-E" (P) (var "P" 408) (op "Ｏ" 413)) ("Ｏ-I" (a) (op "Ｏ" 372) ((op "=" 381) ((op "S" 377) (var "a" 379)) (op "0" 382))) ("〩-E" (P Q R) (var "R" 325) ((op "〩" 331) (var "P" 330) (var "Q" 332)) ((op "卄" 337) (var "P" 335) (var "R" 339)) ((op "卄" 344) (var "Q" 342) (var "R" 346))) ("〩-IR" (P Q) ((op "〩" 293) (var "P" 292) (var "Q" 294)) (var "Q" 299)) ("〩-IL" (P Q) ((op "〩" 263) (var "P" 262) (var "Q" 264)) (var "P" 269)) ("〨-ER" (P Q) (var "Q" 232) ((op "〨" 238) (var "P" 237) (var "Q" 239))) ("〨-EL" (P Q) (var "P" 199) ((op "〨" 205) (var "P" 204) (var "Q" 206))) ("〨-I" (P Q) ((op "〨" 164) (var "P" 163) (var "Q" 165)) (var "P" 170) (var "Q" 173)) ("十-E" (P) (op "Ｏ" 131) ((op "十" 136) (var "P" 137)) (var "P" 140)) ("十-I" (P) ((op "十" 96) (var "P" 97)) ((op "卄" 104) (var "P" 102) (op "Ｏ" 106))) ("Ⅶ-E" (P Q) (var "Q" 62) ((op "Ⅶ" 68) (var "P" 67) (var "Q" 69)) (var "P" 72)) ("Ⅶ-I" (P Q) ((op "Ⅶ" 26) (var "P" 25) (var "Q" 27)) ((op "卄" 34) (var "P" 32) (var "Q" 36)))) t)
+
+
+(setq PEP PrimExpPat)

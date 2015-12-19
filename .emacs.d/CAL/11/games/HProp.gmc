@@ -1,0 +1,30 @@
+(let (var-pat const-pat op-pat open-pat close-pat)
+   (setq const-pat '("Ｏ"))
+   (setq op-pat '("Ⅶ" "〨" "〩" "十"))
+   (cal-deftokens))
+
+
+(DefClass 'bj '(or prop (throw "＞%s＝反湘呿�衛リリ洃═磥牏誘�")))
+
+
+(DefClass 'prop '(or (and "Ｏ" (eval (quote (Abs ((var "x")) 1 (var 0))))) (and (prefix var (paren "[" (list prop ","))) (eval (cons (quote sapp) TREE))) varref (paren "(" prop) (infix prop "Ⅶ" prop) (infix prop "〩" prop) (infix prop "〨" prop) (prefix "十" prop) (throw "＞%s＝反抰鎖匹反丐曰引六氏")))
+
+
+(DefClass 'term '(or varref "nil" (throw "＞%s＝反嫩匹反丐曰引六氏")))
+
+
+(DefClass 'tex-bj 'tex-prop)
+
+
+(DefClass 'tex-prop '(or (and "Ｏ" tex-op) (tex-prefix tex-var (tex-paren "[" (tex-list tex-prop ","))) tex-varref (tex-paren "(" tex-prop) (tex-infix tex-prop "Ⅶ" tex-prop) (tex-infix tex-prop "〩" tex-prop) (tex-infix tex-prop "〨" tex-prop) (tex-prefix (and "十" tex-op) tex-prop)))
+
+
+(DefClass 'tex-term '(or tex-varref (and "nil" tex-op)))
+
+
+(setq PrimExpPat PEP)
+
+(DefGame 'HProp '(("十2" (A B) ((op "Ⅶ" 305) ((op "十" 303) (var "A" 304)) ((op "Ⅶ" 307) (var "A" 306) (var "B" 308)))) ("十1" (A B) ((op "Ⅶ" 274) ((op "Ⅶ" 271) (var "A" 270) (var "B" 272)) ((op "Ⅶ" 281) ((op "Ⅶ" 277) (var "A" 276) ((op "十" 278) (var "B" 279))) ((op "十" 282) (var "A" 283))))) ("〩3" (A B C) ((op "Ⅶ" 236) ((op "Ⅶ" 233) (var "A" 232) (var "C" 234)) ((op "Ⅶ" 242) ((op "Ⅶ" 239) (var "B" 238) (var "C" 240)) ((op "Ⅶ" 247) ((op "〩" 245) (var "A" 244) (var "B" 246)) (var "C" 248))))) ("〩2" (A B) ((op "Ⅶ" 206) (var "B" 205) ((op "〩" 208) (var "A" 207) (var "B" 209)))) ("〩1" (A B) ((op "Ⅶ" 182) (var "A" 181) ((op "〩" 184) (var "A" 183) (var "B" 185)))) ("〨3" (A B) ((op "Ⅶ" 160) ((op "〨" 158) (var "A" 157) (var "B" 159)) (var "B" 161))) ("〨2" (A B) ((op "Ⅶ" 136) ((op "〨" 134) (var "A" 133) (var "B" 135)) (var "A" 137))) ("〨1" (A B) ((op "Ⅶ" 108) (var "A" 107) ((op "Ⅶ" 110) (var "B" 109) ((op "〨" 112) (var "A" 111) (var "B" 113))))) ("Ⅶ2" (A B C) ((op "Ⅶ" 74) ((op "Ⅶ" 71) (var "A" 70) (var "B" 72)) ((op "Ⅶ" 82) ((op "Ⅶ" 77) (var "A" 76) ((op "Ⅶ" 79) (var "B" 78) (var "C" 80))) ((op "Ⅶ" 85) (var "A" 84) (var "C" 86))))) ("Ⅶ1" (A B) ((op "Ⅶ" 44) (var "A" 43) ((op "Ⅶ" 46) (var "B" 45) (var "A" 47)))) ("MP" (A B) (var "B" 16) (var "A" 21) ((op "Ⅶ" 25) (var "A" 24) (var "B" 26)))) t)
+
+
+(setq PEP PrimExpPat)

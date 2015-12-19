@@ -1,0 +1,319 @@
+;; Derivation Game PropExp:
+;; defined by Masahiko Sato at Thu Feb 20 18:30:35 2003
+;; defined by Masahiko Sato at Mon Jan 27 15:13:14 2003
+;; defined by Masahiko Sato at Sat Jan  4 17:19:38 2003
+;; defined by Masahiko Sato at Fri Jan  3 19:16:08 2003
+
+tokens[
+
+  constant ::= "Ⅶ" | "〨" | "〩" | "十" | "Ｏ" 
+  | "varref" | "variable" | "constant" | "nonvoid"
+  | "nv-varseq" | "varseq" |  "exp" | "closed-exp" | "is-in" 
+  | "unit-prop" | "not-prop" | "and-prop"
+  | "or-prop" | "prop" | "denotes"
+  | "judg" | "s-judg" |"b-judg"
+  | "deriv" | "nv-derivseq" | "derivseq" | "rule-name"
+  | "0" | "1" | "Exp" | "map" | "nv-map" | "abs" | "pair" | "inst"
+  | "Ⅶ-I" | "Ⅶ-E" | "十-I" | "十-E" | "〨-I" | "〨-EL" | "〨-ER"
+  | "〩-IL" | "〩-IR" | "〩-E" | "Ｏ-I" | "Ｏ-E" | "卄-E" | "U-E"
+  ;
+  
+  operator ::= "◥" | "=" | "Ｓ" | "+" | "◥" ;
+
+]
+
+syntax[
+
+  bj ::= infix(infix(term, "◥", term), ":",
+               ("unit-prop" | "not-prop" | "and-prop" | "or-prop" | "prop"
+                | "s-judg" | "b-judg" | "judg" 
+                | "nv-derivseq" | "derivseq" | "deriv" | "Exp"))
+  | infix(infix(term, "Ｓ", term), ":", "prop")
+  | infix(infix(term, "Ｓ", term), ":", "judg")
+  | infix(infix(term, "Ｓ", term), ":", "deriv")
+  | infix(term, "=", term)
+  | infix(term, ":", "variable") 
+  | infix(term, ":", "varref")
+  | infix(term, ":", "constant") 
+  | infix(term, ":", "rule-name")
+  | infix(term, ":", "nonvoid") 
+  | infix(term, ":", "nv-varseq") 
+  | infix(term, ":", "varseq") 
+  | infix(term, ":", "closed-exp") 
+  | infix(term, ":", "map") 
+  | infix(term, ":", "nv-map") 
+  | infix(term, "exp", term)
+  | infix(term, "is-in", term)
+  | infix(infix(term, ":", "prop"), "denotes", term)
+  | infix(infix(term, ":", "judg"), "denotes", term)
+  | infix(infix(term, ":", "deriv"), "denotes", term)
+  | infix(term, "Exp", term)
+  | infix(prefix("+", paren("(", infix(term, ",", term))), "=", term)
+  | infix(prefix("pair", paren("(", infix(term, ",", term))), "=", term)
+  | infix(prefix("inst", paren("(", infix(term, ",", term))), "=", term)
+  | infix(prefix("abs", paren("(", infix(term, ",", term))), "=", term)
+  | throw "＞%s＝反湘呿�衛リリ洃═磥牏誘�"
+  ;
+
+  term ::= varref
+  | svar ;; for meta check
+  | paren("√", unitlist)
+  ;
+
+  exp ::= varref
+  | svar
+  | "nil"
+  | paren("<", infix(exp, "|", exp))
+  | paren("[", infix(map, ";", skelton))
+  | throw "＞%s＝反摯匹反丐曰引六氏"
+  ;
+
+  map ::= varref
+  | svar
+  | "0"
+  | "1"
+  | paren("<", infix(map, "|", map))
+  | throw "＞%s＝反譁豭匹反丐曰引六氏"
+  ;
+
+  skelton ::= varref
+  | svar
+  | "0"
+  | exp
+  | paren("<", infix(skelton, "|", skelton))
+  | prefix(paren("(", var), paren("[", infix(map, ";", skelton)))
+  |  throw "＞%s＝反彰傘匹反丐曰引六氏"
+  ;
+
+  tex-bj ::= tex-infix(tex-infix(tex-term, "◥", tex-term), ":",
+               ("unit-prop" | "not-prop" | "and-prop" | "or-prop" | "prop"
+                | "s-judg" | "b-judg" | "judg"
+                | "nv-derivseq" | "derivseq" | "deriv" | "Exp"))
+  | tex-infix(tex-infix(tex-term, "Ｓ", tex-term), ":", "prop")
+  | tex-infix(tex-infix(tex-term, "Ｓ", tex-term), ":", "judg")
+  | tex-infix(tex-infix(tex-term, "Ｓ", tex-term), ":", "deriv")
+  | tex-infix(tex-term, "=", tex-term)
+  | tex-infix(tex-term, ":", "variable") 
+  | tex-infix(tex-term, ":", "varref") 
+  | tex-infix(tex-term, ":", "constant") 
+  | tex-infix(tex-term, ":", "rule-name")
+  | tex-infix(tex-term, ":", "nonvoid") 
+  | tex-infix(tex-term, ":", "nv-varseq") 
+  | tex-infix(tex-term, ":", "varseq") 
+  | tex-infix(tex-term, ":", "closed-exp") 
+  | tex-infix(tex-term, ":", "map") 
+  | tex-infix(tex-term, ":", "nv-map") 
+  | tex-infix(tex-term, "exp", tex-term)
+  | tex-infix(tex-term, "is-in", tex-term)
+  | tex-infix(tex-infix(tex-term, ":", "prop"), "denotes", tex-term)
+  | tex-infix(tex-infix(tex-term, ":", "judg"), "denotes", tex-term)
+  | tex-infix(tex-infix(tex-term, ":", "deriv"), "denotes", tex-term)
+  | tex-infix(tex-term, "Exp", tex-term)
+  | tex-infix(tex-prefix("+", 
+                         tex-paren("(", 
+                                   tex-infix(tex-term, ",", tex-term))), 
+              "=", tex-term)
+  | tex-infix(tex-prefix("pair", 
+                         tex-paren("(", 
+                                   tex-infix(tex-term, ",", tex-term))), 
+              "=", tex-term)
+  | tex-infix(tex-prefix("inst", 
+                         tex-paren("(", 
+                                   tex-infix(tex-term, ",", tex-term))), 
+              "=", tex-term)
+  | tex-infix(tex-prefix("abs", 
+                         tex-paren("(", 
+                                   tex-infix(tex-term, ",", tex-term))), 
+              "=", tex-term)
+  | throw "＞%s＝反湘呿�衛リリ洃═磥牏誘�"
+  ;
+
+  tex-term ::= tex-varref
+  | tex-paren("√", tex-unitlist)
+  ;
+
+  tex-exp ::= tex-varref
+  | svar
+  | "nil" & tex-op
+  | tex-paren("<", tex-infix(tex-exp, "|", tex-exp))
+  | tex-paren("[", tex-infix(tex-map, ";", tex-skelton))
+  | throw "＞%s＝反摯匹反丐曰引六氏"
+  ;
+
+  tex-map ::= tex-varref
+  | svar
+  | "0" & tex-op
+  | "1" & tex-op
+  | tex-paren("<", tex-infix(tex-map, "|", tex-map))
+  | throw "＞%s＝反譁豭匹反丐曰引六氏"
+  ;
+
+  tex-skelton ::= tex-varref
+  | svar
+  | "0" & tex-op
+  | tex-exp
+  | tex-paren("<", tex-infix(tex-skelton, "|", tex-skelton))
+  | tex-prefix(tex-paren("(", tex-var), tex-paren("[", tex-infix(tex-map, ";", tex-skelton)))
+  | throw "＞%s＝反彰傘匹反丐曰引六氏"
+  ;
+
+]
+
+rules[
+
+  "variable"(al): al:variable :- $(cal-q-var-p al) ;
+  "constant"(ga): ga:constant 
+      :- $(cal-q-exp-const-p ga 
+           '("Ⅶ" "〨" "〩" "十" "Ｏ" "nil"
+             "Ⅶ-I" "Ⅶ-E" "十-I" "十-E" "〨-I" "〨-EL" "〨-ER"
+             "〩-IL" "〩-IR" "〩-E" "Ｏ-I" "Ｏ-E" "卄-E" "U-E" "0" "1"
+             )) ;
+
+  "nonvoid"(mu): mu:nonvoid :- $(cal-q-nonvoid-p mu) ;
+
+  "nv-varseq1"(al): al: nv-varseq :- al:variable ;
+  "nv-varseq2"(Ga,al): √^Ga,^al＜:nv-varseq :- Ga:nv-varseq, al:variable ;
+
+  "varseq0"(): √＜:  varseq :- ;
+  "varseq1"(Ga): Ga:  varseq :- Ga:nv-varseq ;
+
+  "varref"(al): al:varref :- $(cal-q-varref-p al) ;
+  "is-in"(mu,nu): mu is-in nu :- $(cal-q-is-in mu nu) ;
+
+  "varref-exp"(Ga,al): Ga exp al :- Ga:varseq, al:varref, al is-in Ga;
+  "const-exp"(Ga,ga): Ga exp ga :- Ga:varseq, ga:constant ;
+  "pair-exp"(Ga,ph,ps): Ga exp √<^ph|^ps>＜:- Ga exp ph, Ga exp ps ;
+  "abs-exp0"(al,ph): √＜ exp √(^al)[^ph]＜ :- al:variable, al exp ph ;
+  "abs-exp1"(Ga,al,ph): Ga exp √(^al)[^ph]＜:- al:variable, √^Ga, ^al＜exp ph ;
+  
+  "closed-exp"(ph): ph:closed-exp :- √＜exp ph ;
+ 
+  "varref-list"(al): al = al :- al:varref ;
+  "const-list"(ga): ga = ga :- ga:constant ;
+  "pair-list"(mu,nu,ph,ps): √<^mu | ^nu>＜= √<^ph | ^ps>＜:-
+      mu=ph, nu=ps ;
+  "abs-list"(al,mu,ph): √(^al)[^mu]＜=√(^al)[^ph]＜:- al:variable, mu = ph ;
+  "nil-list"(): √<>＜= √nil＜:- ;
+  "cons-list0"(mu,ph): √<^mu>＜=√<^ph|nil>＜:- mu=ph ;
+  "cons-list1"(mu,nu,ph,ps): √<^mu,^nu>＜=√<^ph|^ps>＜:- 
+      mu=ph, nu:nonvoid,√<^nu>＜=ps ;
+
+  "unit-prop1"(): √Ｏ＜◥ √Ｏ＜:unit-prop :- ;
+  "unit-prop2"(al): al ◥ al:unit-prop :- al:varref ;
+  "unit-prop3"(si,mu): √(^si)＜◥ mu : unit-prop :- si ◥ mu : prop ;
+  "unit-prop4"(si,mu): √[^si]＜◥ mu : unit-prop :- si ◥ mu : judg ;
+
+  "not-prop1"(si,mu): si◥ mu : not-prop :- si ◥ mu : unit-prop ;
+  "not-prop2"(si,mu): √十^si＜◥ √<十, ^mu>＜ : not-prop :- si ◥ mu : not-prop ;
+
+  "and-prop1"(si,mu): si◥ mu : and-prop :- si ◥ mu : not-prop ;
+  "and-prop2"(si,ta,mu,nu): √^si〨^ta＜◥ √<〨, ^mu, ^nu>＜ : and-prop
+      :- si ◥ mu : not-prop, ta ◥ nu : and-prop ;
+  
+  "or-prop1"(si,mu): si◥ mu : or-prop :- si ◥ mu : and-prop ;
+  "or-prop2"(si,ta,mu,nu): √^si〩^ta＜◥ √<〩, ^mu, ^nu>＜ : or-prop 
+      :- si ◥ mu : and-prop, ta ◥ nu:or-prop ;
+
+  "prop1"(si,mu): si◥ mu : prop :- si ◥ mu : or-prop ;
+  "prop2"(si,ta,mu,nu): √^siⅦ^ta＜◥ √<Ⅶ, ^mu, ^nu>＜ : prop 
+      :- si ◥ mu : or-prop, ta ◥ nu:prop ;
+
+  "s-judg1"(al): al ◥ al:s-judg :- al:variable ;
+  "s-judg2"(si,mu): √(^si)＜◥mu : s-judg :- si ◥ mu:judg ;
+  "s-judg3"(al,si,mu): √(^al)[^si]＜◥√(^al)[^mu]＜:s-judg
+      :- al:variable, si◥mu:judg ;
+  "b-judg"(si,mu): si◥mu:b-judg :- si◥mu:prop ;
+  "judg1"(si,mu): si◥mu:judg :- si◥mu:s-judg ;
+  "judg2"(si,mu): si◥mu:judg :- si◥mu:b-judg ;
+  "judg3"(si,ta,mu,nu): √^si卄^ta＜◥√<卄,^mu,^nu>＜:judg
+      :- si◥mu:s-judg, ta◥nu:judg;
+  "judg4"(si,ta,mu,nu): √^si卄^ta＜◥√<卄,^mu,^nu>＜:judg
+      :- si◥mu:b-judg, ta◥nu:judg;
+
+  "rule-name"(rh): rh:rule-name 
+      :- $(cal-q-exp-const-p rh 
+           '("Ⅶ-I" "Ⅶ-E" "十-I" "十-E" "〨-I" "〨-EL" "〨-ER"
+             "〩-IL" "〩-IR" "〩-E" "Ｏ-I" "Ｏ-E" "卄-E" "U-E"
+             )) ;
+
+  "nv-derivseq1"(de,nu): √^de＜◥√<^nu>＜:nv-derivseq :- de◥nu:deriv ;
+  "nv-derivseq2"(de,Pi,mu,nu): √^de; ^Pi＜◥√<^mu | ^nu>＜:nv-derivseq
+      :- de◥mu:deriv, Pi◥nu:nv-derivseq ;
+  "derivseq0"(): √＜◥√<>＜: derivseq :- ;
+  "derivseq1"(Pi,nu): Pi◥nu:derivseq :- Pi◥nu:nv-derivseq ;
+
+  "varref-deriv"(al): al◥al:deriv :- al:varref ;
+  "rule-deriv"(si,rh,Pi,mu,nu): √^si by ^rh {^Pi}＜◥√<^mu, ^rh, ^nu>＜:deriv
+      :- si◥mu:judg, rh:rule-name, Pi◥nu:derivseq ;
+  "cond-deriv"(si,de,mu,nu,x): √(^x::^si)[^de]＜◥√<^mu, (^x)[^nu]>＜:deriv
+      :- si◥mu:judg, x:variable, de◥nu:deriv ;
+  "univ-deriv"(x,de,nu): √(^x)[^de]＜◥√(^x)[^nu]＜:deriv
+      :- x:variable, de◥nu:deriv ;
+  
+  "prop-denotes"(si,ph,mu,al): si:prop denotes al
+      :- si ◥ mu:prop, mu = ph, ph ◥ al:Exp ;
+  "prop-defeq"(si,ta,al): si Ｓ ta : prop 
+      :- si:prop denotes al, ta:prop denotes al ;
+
+  "judg-denotes"(si,ph,mu,al): si:judg denotes al
+      :- si ◥ mu:judg, mu = ph, ph ◥ al:Exp ;
+  "judg-defeq"(si,ta,al): si Ｓ ta : judg 
+      :- si:judg denotes al, ta:judg denotes al ;
+
+  "deriv-denotes"(si,ph,mu,al): si:deriv denotes al
+      :- si ◥ mu:deriv, mu = ph, ph ◥ al:Exp ;
+  "deriv-defeq"(si,ta,al): si Ｓ ta : deriv 
+      :- si:deriv denotes al, ta:deriv denotes al ;
+
+  "map-0"(): √0＜:map :- ;
+  "map-1"(): √1＜:map :- ;
+  "map-pair1"(mu,nu): √(^mu | ^nu)＜:map :- mu:nv-map, nu:map ;
+  "map-pair2"(mu,nu): √(^mu | ^nu)＜:map :- mu:map, nu:nv-map ;
+
+  "nv-map-1"(): √1＜:nv-map :- ;
+  "nv-map-pair1"(mu,nu): √(^mu | ^nu)＜:nv-map :- mu:nv-map, nu:map ;
+  "nv-map-pair2"(mu,nu): √(^mu | ^nu)＜:nv-map :- mu:map, nu:nv-map ;
+
+  "map-pairup-0"(): pair(√0＜,√0＜)=√0＜:- ;
+  "map-pairup-1"(mu,nu): pair(mu,nu)=√(^mu | ^nu)＜:- mu:nv-map, nu:map ;
+  "map-pairup-2"(mu,nu): pair(mu,nu)=√(^mu | ^nu)＜:- mu:map, nu:nv-map ;
+  "map+0L"(mu): +(√0＜, mu)=mu :- ;
+  "map+0R"(mu): +(mu, √0＜)=mu :- ;
+  "map+pair"(mu,nu,ga,de,si,ta): +(√(^mu|^nu)＜,√(^ga|^de)＜)= √(^si|^ta)＜
+      :- +(mu, ga)=si, +(nu, de)=ta ;
+  
+  "varref-Exp"(De,al): De Exp al :- De:varseq, al:varref, al is-in De ;
+  "const-Exp"(De,ga): De Exp ga :- De:varseq, ga:constant ;
+  "pair-Exp"(De,al, be):  De Exp √<^al | ^be>＜ :- De Exp al, De Exp be ;
+  "abs-Exp1"(De):  De Exp √[1; 0]＜ :- ;
+  "abs-Exp2"(De,al): De Exp √[0; ^al]＜ :- De Exp al ;
+  "abs-Exp3"(De,mu,nu,ka,si,ta): De Exp √[^ka; <^si | ^ta>]＜
+      :- De Exp √[^mu; ^si]＜, De Exp √[^nu; ^ta]＜, pair(mu, nu)=ka ;
+  "abs-Exp4"(De,mu,nu,ka,si): De Exp √[^mu; [^nu; ^si]]＜
+      :- +(mu, nu)=ka, De Exp √[^ka; ^si]＜ ;
+
+  "inst-1"(al):     inst(√[1; 0]＜,al)=al :- ;
+  "inst-0"(be,al): inst(√[0; ^be]＜,al)=be :- ;
+  "inst-pair"(mu,nu,si,ta,be,ga,al): 
+  inst(√[(^mu | ^nu); <^si | ^ta>]＜,al)=√<^be | ^ga>＜
+      :- inst(√[^mu;^si]＜,al)=be, inst(√[^nu;^ta]＜,al)=ga ;
+  "inst-abs"(mu,nu,si,ta,al): inst(√[^mu; [^nu; ^si]]＜,al)=√[^nu; ^ta]＜
+      :- inst(√[^mu; ^si]＜,al)=ta ;
+
+  "abs-const"(x,al): abs(x,al)=√[0;^al]＜ :- x:variable, al:constant ;
+  "abs-varref1"(x): abs(x, x)=√[1; 0]＜ :- x:variable ;
+  "abs-varref2"(x,al): abs(x, √#^al＜)=√[0; ^al]＜ :- $(cal-q-is-core x al) ;
+  "abs-varref3"(x,al): abs(x, al)=√[0; ^al]＜ :- $(cal-q-is-not-core x al) ;
+  "abs-pair"(x,al,be,mu,nu,ka,si,ta): abs(x, √<^al | ^be>＜)=√[^ka;<^si|^ta>]＜
+      :- abs(x,al)=√[^mu;^si]＜,  abs(x,be)=√[^nu;^ta]＜, pair(mu,nu)=ka ;
+  "abs-abs"(x,mu,si,ga): abs(x, √[^mu;^si]＜)=√[^nu; [^mu;^ta]]＜
+      :- abs(x,si)=√[^nu;^ta]＜ ;
+
+  "varref-eE"(al): al◥al:Exp :- al:varref ;
+  "const-eE"(ga): ga◥ga:Exp :- ga:constant ;
+  "pair-eE"(ph,ps,al,be): √<^ph|^ps>＜◥√<^al|^be>＜:Exp
+      :- ph◥al:Exp, ps◥be:Exp ;
+  "abs-eE"(x,ph,al,be): √(^x)[^ph]＜◥be:Exp
+      :- x:variable, ph◥al:Exp, abs(x, al)=be ;
+
+]

@@ -1,0 +1,14 @@
+;; Derivation Game Common:
+;; defined by Masahiko Sato at Wed Oct  8 15:43:45 2003
+;; defined by Masahiko Sato at Sun Feb  9 22:31:44 2003
+;; defined by Masahiko Sato at Tue Jan 14 22:05:38 2003
+
+rules[
+
+  ;; "id"(p,q): q :- p, $(nf-eq p q) ;
+  "id"(J): J :- J ;
+  "conj"(p): p :- $(member user-login-name cal-debugger-list) ;
+  "def-I"(p, q): q :- p, $(cal-check-def-I p q) ;
+  "def-E"(p, q): q :- p, $(cal-check-def-E p q) ;
+
+]

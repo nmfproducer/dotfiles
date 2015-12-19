@@ -1,0 +1,1025 @@
+2010-10-19  Masahiko Sato  <a0017249@unix5>
+
+	* cal-check-user-id:
+	changed the entrance year patter to accept until 2099.
+
+2009-09-30  Masahiko Sato  <a0017249@unix2>
+
+	* cal.el: added write-region patch in cal7.03-patch.el.
+	actually, no need for this, as it is already in  patch.el
+	which is loaded from cal.el
+
+2005-11-27  Masahiko Sato  <masahiko@localhost.localdomain>
+
+	* cal.el: merged 6.999 and 7.02.
+
+2004-05-09  Masahiko Sato  <masahiko@debian>
+
+	* cal-lang.el: new file for multi-language support.
+
+	* cal-util.el: language support の部分を cal-lang.el に移動．
+
+	* cal.el (cal-mode): welcome message 等の日本語を format の引数に
+	した．(他の言語にも対応するため．)
+
+2004-05-08  Masahiko Sato  <masahiko@debian>
+
+	* cal.el (cal-language): new variable. default は "japanese"
+	他に "english" を指定できる．
+	(cal-report-error): format 形式に変更
+
+2004-04-15  Masahiko Sato  <masahiko@venus.sato.kuis.kyoto-u.ac.jp>
+
+	* cal-w3m.el (cal-check-cookie): new function.
+
+	* cal.el (cal-mode): cal-record-file を upload する前に
+	cookie をチェックするようにした．
+
+2003-12-25  Masahiko Sato  <masahiko@debian>
+
+	* cal-w3m.el (cal-upload): cal-record の中の cal-thm-list を
+	アップロードしないようにした．
+
+2003-12-23  Masahiko Sato  <masahiko@debian>
+
+	* cal.el (cal-convert-hypj-to-condj): 仮定を separate する「,」
+	を探すときに，括弧の中は無視するようにした．
+	(cal-split-str): 括弧の中を無視する optionを追加．
+	(cal-string-search): 括弧の中を無視する optionを追加．
+
+2003-12-14  Masahiko Sato  <masahiko@debian>
+
+	* cal.el (cal-parse): prin1 (%S) で出力するように変更．
+
+2003-12-07  Masahiko Sato  <masahiko@debian>
+
+	* cal-tex.el (caltex-nil-pad-list): new constant.
+	(caltex-unitlist-main): caltex-nil-pad-list を使って pad を
+
+	* cal.el (cal-defgame): ゲームの定義に成功した後で，gmc ファイルをロード
+	するようにした．これにより，gmc ファイルに lisp code (eval-in-gmc ...)
+	があれば実行される．
+	(eval-in-gmc): new macro function.
+
+2003-11-28  Masahiko Sato  <masahiko@dyna>
+
+	* cal-tex.el (caltex-play): modified to call cal-game-file.
+
+	* cal.el (cal-game-dirs): game-dir のリスト．
+	(cal-saved-game-dirs): demo 実行の前に cal-games-dir を save し
+	終了時に restore する．
+	(cal-saved-current-game): demo 実行の前に cal-current-game を save し
+	終了時に restore する．
+	(cal-current-game-file): new version
+	(cal-game-file): new function
+
+2003-11-27  Masahiko Sato  <masahiko@dyna>
+
+	* cal.el (require): we require parser and nf when comile cal.el
+
+2003-11-24  Masahiko Sato  <masahiko@debian>
+
+	* cal-tex.el (caltex-geometry): new function.
+	(caltex-size): new variable.
+
+	* cal.el (cal-eval): new command.
+	(cal-comment): debug
+	(cal-defgame): cal-private-game-dir が string かどうかを最初に
+	チェックするようにした．
+
+2003-11-23  Masahiko Sato  <masahiko@debian>
+
+	* cal.el (cal-demo-face): new face used when cal-demo is on.
+	(cal-insert-prompt): change face when cal-demo is on.
+	(cal-return): demo 終了時の処理を変更
+	(cal-demo): CALLOG ファイルを実行できるようにした
+	(cal-comment): new command, just insert a comment
+
+2003-11-22  Masahiko Sato  <masahiko@debian>
+
+	* cal.el (cal-demo): debug
+	(cal-get-a-command): nullary command も扱えるようにした．
+	(cal-error-to-nil): new function
+;;;;	(cal-defeq): new command
+	(cal-check-first-arg): modified for "parse", "inclass" and "defeq"
+;;;;	(cal-inclass): new command
+
+2003-11-18  Masahiko Sato  <masahiko@debian>
+
+	* cal.el (cal-initial-setup): cal-use-w3m が t かどうかで処理を変更．
+	(cal-meta): 
+
+2003-11-17  Masahiko Sato  <masahiko@debian>
+
+	* cal-util.el: moved following functions to cal-obsolete.el
+	domainame, cal-mail-to-callog, cal-mail-to-kougi, cal-sendmail
+
+	* cal.el (cal-use-w3m): new variable
+	(cal-record): private-install の部分を削除
+
+2003-11-15  Masahiko Sato  <masahiko@debian>
+
+	* cal.el (cal-space): new function
+
+2003-11-02  Masahiko Sato  <masahiko@debian>
+
+	* cal.el (cal-interactive): new variable.
+
+2003-11-01  Masahiko Sato  <masahiko@debian>
+
+	* cal.el (cal-tex): check-derivation を vertical = T でよぶように変更．
+
+2003-10-29  Masahiko Sato  <masahiko@venus.sato.kuis.kyoto-u.ac.jp>
+
+	* cal.el (cal-record): (cal-today)
+	を使わないで，引数が "" のときには最新の記録を表示するようにした．
+
+2003-10-27    <a0017249@pc0331.vmware.ipse.media.kyoto-u.ac.jp>
+
+	* cal.el (cal-initial-setup): (user-login-name) を　(getenv "USER")
+	に変更．
+
+2003-10-23  Masahiko Sato  <masahiko@venus.sato.kuis.kyoto-u.ac.jp>
+
+	* cal.el (cal-mode): Q[1] を解いているときのみ，最初に record file を
+	アップロードするようにした．
+	(cal-exit): Q[1] を解いているときのみ，record file を upload するようにした．
+	(cal-news): 空な文字列の場合に cal-news-list をアップデートしていなかったバグを修正．
+
+	* cal-util.el (cal-correct-file): 正しいファイルの場合にはサイズを返すようにした．
+
+2003-10-20  Masahiko Sato  <masahiko@debian>
+
+	* cal.el (cal-mode): record file を最初にアップロードするようにした．
+	前回のセッションでアップロードに失敗した場合への対処．
+	(cal-record): cal-R-file をダウンロードするようにした．
+
+2003-10-20  Masahiko Sato  <masahiko@venus.sato.kuis.kyoto-u.ac.jp>
+
+	* cal.el (cal-get-news): new function
+	(cal-news): cal-get-news であらかじめニュースを読み込むようにした．
+	(cal): cal-get-news を実行してサーバとの接続を最初に確認するようにした．
+	(cal-mode): 上の変更にともなう若干の修正．
+
+2003-10-13  Masahiko Sato  <masahiko@moon.kuis.kyoto-u.ac.jp>
+
+	* cal.el (cal-A): 2002 のチェックを削除
+
+2003-10-13  Masahiko Sato  <masahiko@debian>
+
+	* cal.el (cal-call-process): cal-site.el で使われることがあるので
+	ファイルの先頭に移動した．
+
+2003-10-08  Masahiko Sato  <masahiko@venus.sato.kuis.kyoto-u.ac.jp>
+
+	* cal-tex.el (caltex-greek-char): "Π", "Σ" を追加．
+
+2003-10-06  Masahiko Sato  <masahiko@debian>
+
+	* cal.el (cal-mode): universal judgment
+	で用いる token "Π" を追加した．
+	(cal-univ): new function for inserting "Π"
+
+2003-10-01  Masahiko Sato  <masahiko@debian>
+
+	* cal.el (cal-call-process): moved from cal-site.el
+	(cal-report-fatal-error): moved from cal-site.el
+
+2003-10-01  Masahiko Sato  <masahiko@venus.sato.kuis.kyoto-u.ac.jp>
+
+	* cal-w3m.el (cal-upload): cal-w3m-command-arguments を追加．
+	(cal-download): cal-w3m-command-arguments を追加．
+
+	* cal.el (cal-initial-setup): cal-w3m-command-arguments を追加．
+
+2003-09-30  Masahiko Sato  <masahiko@venus.sato.kuis.kyoto-u.ac.jp>
+
+	* cal-util.el (cal-correct-file): new function.
+
+	* cal.el (cal-exit): cal-record, CALLOG を upload するようにした．
+
+2003-09-28  Masahiko Sato  <masahiko@debian>
+
+	* cal.el (cal-mode): cal-initial-setup を実行するようにした．
+	(cal-news): news file をダウンロードするようにした．
+	(cal-Q): problems file をダウンロードするようにした．
+	(cal-A): answers file をダウンロードするようにした．
+	(cal-check-user-id): cal-initial-setup を使うようにした．
+
+2003-07-08  Masahiko Sato  <masahiko@venus.kuis.kyoto-u.ac.jp>
+
+	* cal-tex.el (caltex-check-deriv): optional VERTICAL
+	を t にすると ABSv で typeset するようにした．
+
+2003-06-23  Masahiko Sato  <masahiko@venus.kuis.kyoto-u.ac.jp>
+
+	* cal.el (cal-varref-region): debugged
+
+2003-02-09  Masahiko Sato  <masahiko@debian>
+
+	* cal.el (cal-defgame): .gm ファイルをコンパイルして .gmc ファイルを
+	つくるようにした．
+	(cal-parse-defs): parse すると同時にコンパイルするようにした．
+	(cal-play): .gmc ファイルをロードするようにした．
+	(cal-print-tree): 文字列を %S で format して出力するようにした．「\」
+	を正しく出力するため．
+
+2003-01-29  Masahiko Sato  <masahiko@venus.kuis.kyoto-u.ac.jp>
+
+	* cal.el (cal-check-deriv-meta): 仮定列にもメタ変数を許すように変更．
+
+2003-01-27  Masahiko Sato  <masahiko@venus.kuis.kyoto-u.ac.jp>
+
+	* cal.el (cal-get-thm): modified.
+	(cal-check-thm): modified for new version using NF.
+
+2003-01-26  Masahiko Sato  <masahiko@debian>
+
+	* cal.el (cal-rd-p): new function.
+	(cal-rt-p): new function.
+	(cal-normal-term-p): new function.
+	(cal-normal-deriv-p): new function.
+	(cal-remove-definition): debug
+	(cal-check-def): revised.
+
+2003-01-18  Masahiko Sato  <masahiko@debian>
+
+	* cal.el (cal-remove-definition): new function.
+
+2003-01-17  Masahiko Sato  <masahiko@debian>
+
+	* cal.el (cal-insert-lines): 余分な改行を insert しないようにした．
+	(cal-insert): 余分な改行を insert しないようにした．
+	(cal-split-str): new function.  cal-split-by-colon の一般化
+	(cal-convert-hypj-to-condj): new function.
+	(cal-string-search): new function.
+
+2003-01-17  Masahiko Sato  <masahiko@venus.kuis.kyoto-u.ac.jp>
+
+	* cal.el (cal-print-tree): list をプリントするときの indent の深さを
+	2番目の引数で指定できるようにした．
+	(cal-check-deriv-meta): meta-judgment として parse するときに
+	meta-cal を t にして ParseString を実行．
+
+2003-01-16  Masahiko Sato  <masahiko@venus.kuis.kyoto-u.ac.jp>
+
+	* cal.el (cal-game-ops): game の定数で定義された述語，定理のリスト．
+	関数 cal-set-current-game で参照される．
+	(cal-exit): cal-thm-list をセーブするように変更．
+	(cal-mode): cal-thm-list を recover するように変更．
+
+2003-01-15  Masahiko Sato  <masahiko@venus.kuis.kyoto-u.ac.jp>
+
+	* cal.el: cal-games-in-play を廃止．
+	(cal-set-current-game): new function
+	(cal-update-list): new function
+	(cal-split-by-colon): new function
+
+2003-01-14  Masahiko Sato  <masahiko@debian>
+
+	* cal.el (cal-print-tree): interger の場合の処理を追加．
+
+	* cal-games.el (cal-check-def-I): def-I 規則をチェック．
+	(cal-check-def-E): def-E 規則をチェック．
+
+2003-01-13  Masahiko Sato  <masahiko@debian>
+
+	* cal.el (cal-meta): set the default value to NIL.
+	(cal-parse-defs): set CAL-META to T
+
+2003-01-07  Masahiko Sato  <masahiko@debian>
+
+	* cal-tex.el (caltex-defrule2-fun): 
+	"Aux fun called from within the syntax class TEX-DEFRULE2"
+
+2003-01-04  Masahiko Sato  <masahiko@debian>
+
+	* cal-tex.el (caltex-parse-rule): case-fold-search を nil にして
+	search するようにした．
+	(caltex-parse-rule): rule の範囲を確定するために regexp pattern を使う
+	ようにした．
+	(caltex-unitlist-main): 括弧が {} のときに \leftbrace, \rightbrace として
+	変換するようにした．
+
+	* cal.el (cal-defgame): ゲームを定義した日付の更新を改善．
+	(cal-syntax): debug
+	(cal-tokens): debug
+	(cal-play): game を読み込むときにメッセージを出すようにした．
+
+2003-01-03  Masahiko Sato  <masahiko@debian>
+
+	* cal.el (cal-tex): META-VARS を nil にセット
+
+2003-01-01  Masahiko Sato  <masahiko@debian>
+
+	* cal-tex.el (caltex-parse-rule): META-VARS を宣言して使うようにした．
+	(caltex-term-sch): new function. "Parse STR as a schematic term."
+
+2002-12-30  Masahiko Sato  <masahiko@debian>
+
+	* cal-games.el (cal-q-is-core): "Check if VAR is the core of VARREF"
+	(cal-q-is-not-core): "Check if VAR is not the core of VARREF"
+
+2002-12-29  Masahiko Sato  <masahiko@debian>
+
+	* cal-tex.el (caltex-unitlist-main): # の直前の pad を "" にした．
+	(caltex-unitlist-main): # の直後の pad を "" にした．
+	(caltex-var): Ix も italic にするように変更．「in」が予約語なので「In」
+	を使えるようにした．
+	(caltex-unitlist-tt): new function
+	(caltex-varref-to-tex): g ではじまる3文字の変数をギリシャ文字に変換．
+	(caltex-var): g ではじまる3文字の変数をギリシャ文字に変換．
+
+	* cal-games.el (cal-q-is-in): new function.
+	(cal-q-varref-p): new function.
+
+2002-12-28  Masahiko Sato  <masahiko@debian>
+
+	* cal-tex.el (caltex-greek-char): # を mytt で変換できるようにした．
+
+2002-12-25  Masahiko Sato  <masahiko@debian>
+
+	* cal-tex.el (caltex-varref-to-tex): # を \symbol{"23}
+	に変換するようにした．
+
+2002-12-22  Masahiko Sato  <masahiko@debian>
+
+	* cal-tex.el (caltex-varref-to-tex): 変数名が2文字で最初の文字が i
+	のときは2文字目を italic でセットするようにした．
+	(caltex-var): moved from TeX.gm.
+	(caltex-varref): moved from TeX.gm.
+
+2002-12-19  Masahiko Sato  <masahiko@venus.kuis.kyoto-u.ac.jp>
+
+	* cal-tex.el (caltex-parse-rule): 規則の終了位置を示す「;」を正しく見つける
+	ように修正．
+
+2002-12-13  Masahiko Sato  <masahiko@debian>
+
+	* cal.el (cal-command-0): textt, texit を追加．
+
+2002-12-08  Masahiko Sato  <masahiko@debian>
+
+	* cal.el (cal-meta): meta-variable を含む判断を parse できるようにする
+	変数．
+
+2002-12-06  Masahiko Sato  <masahiko@debian>
+
+	* cal-tex.el (caltex-check-deriv): optional argument CALTEX-TT-VAR
+	を追加．この変数を t にすると変数は tt font でプリントされる．
+	(caltex-varref-to-tex): moved from TeX.gm.
+	(caltex-list-to-and-list): same as above.
+	(caltex-list-to-comma-list): same as above.
+
+2002-12-04  Masahiko Sato  <masahiko@debian>
+
+	* cal-games.el (cal-q-exp-const-p): 定数のリストを関数の引数で与えることに
+	した．
+
+2002-12-01  Masahiko Sato  <masahiko@debian>
+
+	* cal.el (cal-mode): triv を廃止，id を追加
+
+2002-11-27  Masahiko Sato  <masahiko@venus.kuis.kyoto-u.ac.jp>
+
+	* cal-tex.el (caltex-str-to-tex): new function.  論理記号等の
+	JSIの文字を含む文字列を tex command に convert する．
+	
+2002-11-26  Masahiko Sato  <masahiko@venus.kuis.kyoto-u.ac.jp>
+
+	* cal.el (cal-A): cal-user-id に所属，email address があるかをチェック
+	するようにした．
+	(cal-check-deriv-meta): cal-check-deriv を judgment が meta variable
+	を含む場合に拡張．
+
+2002-11-25  Masahiko Sato  <masahiko@venus.kuis.kyoto-u.ac.jp>
+
+	* cal.el (cal-check-game): 引数で指定したゲームをプレイ中かチェックする．
+	(cal-match-deriv): derivation が 与えられた derivation schema のインスタンス
+	かどうかをチェックする．
+
+2002-11-24  Masahiko Sato  <masahiko@debian>
+
+	* cal.el (cal-test-run): cal-tex.el を load するように変更．
+
+2002-11-23  Masahiko Sato  <masahiko@debian>
+
+	* cal-tex.el (caltex-unitlist-main): paren のときには pad を "" にセット．
+
+2002-11-17  Masahiko Sato  <masahiko@debian>
+
+	* cal.el (cal-return): (if (re-search-backward "[ \t\n]in[ \t\n]" q t)
+	を (if (re-search-backward "in[ \t\n]" q t) に変更．
+
+2002-11-16  Masahiko Sato  <masahiko@debian>
+
+	* cal-tex.el (caltex-unitlist-main): greek letter 2文字の keyword
+	で出せるようにした．
+
+2002-11-14  Masahiko Sato  <masahiko@venus.kuis.kyoto-u.ac.jp>
+
+	* cal.el (cal-defgame): cal-private-game-dir があれば，その下に
+	ゲームの定義を置くようにした．
+	(cal-check-first-arg): コマンドが defgame のときに cal-private-game-dir
+	があればそこもチェックするようにした．
+	(cal-play): cal-private-game-dir があればそこからロードできようにした．
+	(cal-current-game-file): cal-private-game-dir を考慮して，play 中の
+	ゲームのファイル名を計算する．
+	(cal-tokens): 上の関数を利用するように変更．
+	(cal-syntax): 同上．
+	(cal-rules): 同上．
+
+2002-11-14  Masahiko Sato  <masahiko@debian>
+
+	* cal-games.el (cal-q-in): check if ITEM is a member of LIST.
+
+2002-11-11  Masahiko Sato  <masahiko@venus.kuis.kyoto-u.ac.jp>
+
+	* cal.el (cal-check-deriv): どのゲームでチェックするかを指定するために，
+	関数の引数にゲームの名前を追加した．
+
+2002-11-06  Masahiko Sato  <masahiko@venus.kuis.kyoto-u.ac.jp>
+
+	* cal.el (cal-record): optional argument をなくして，1引数に限定．
+	(cal-A): 正解の場合は CALLOG ファイルにセーブするように変更．
+
+2002-11-04  Masahiko Sato  <masahiko@debian>
+
+	* cal.el (cal-increment-prompt-count): cal-current-game
+	も記録するようにした．
+
+2002-11-04  Masahiko Sato  <masahiko@dyna>
+
+	* cal-tex.el (caltex-check-deriv): parse-tex の結果の最初が
+	「\ABS{」のときにはこれを「\ABStop{」で置き換える．
+
+2002-10-30  Masahiko Sato  <masahiko@venus.kuis.kyoto-u.ac.jp>
+
+	* cal.el (cal-record): cal-private-install
+	の部分を doit-yourself にして，その値を nil にした．
+	(cal-key-help): key bind を以下のように変更． 
+	"p:├, i:⊃, a:∧, o:∨, n:¬, f:⊥, l:λ, A:∀, E:∃, <:《, >:》, y:⇒, Y:→"
+	(cal-exp-region): e == (var int) のときに正しく計算するようにした．
+	(cal-check-deriv): 導出で指定したゲームとプレイ中のゲームが一致するかをチェック．
+
+2002-10-29  Masahiko Sato  <masahiko@venus.kuis.kyoto-u.ac.jp>
+
+	* cal.el (cal-open-bracket): command-0
+	が入力されていたらそのまま実行するようにした．
+	(cal-deriv-rules): deriv で使用されている規則のリストを計算する関数．
+
+2002-10-28  Masahiko Sato  <masahiko@venus.kuis.kyoto-u.ac.jp>
+
+	* cal.el (cal-mode): cal-record-file
+	を cal-load-file でなく，load-file でロードするように変更．
+
+2002-10-21  Masahiko Sato  <masahiko@dyna>
+
+	* cal.el (cal-toklist-region): svar も処理できるようにした．
+
+2002-10-09  Masahiko Sato  <masahiko@venus.kuis.kyoto-u.ac.jp>
+
+	* cal.el (cal-mode): 関数名 cal-Problem を cal-Q に変更．
+	(cal-exit): cal-record に cal-current-game をセーブ．次回のセッションで
+	このゲームから開始できるようにした．
+	(cal-mode): 上のことに対応する変更．
+
+2002-10-02  Masahiko Sato  <masahiko@venus.kuis.kyoto-u.ac.jp>
+
+	* cal.el (parser-extend-prim-exp-pat): 単純にパターンに追加するようにした．
+	無駄な追加を防ぐのは大変なので，チェックをさぼることにした．
+
+2002-09-25  Masahiko Sato  <masahiko@debian>
+
+	* cal.el (cal-check): 導出で指定したゲームとプレイ中のゲームが一致しない
+	ときの処理を改善．
+	(cal-command-0): help を追加．
+	(cal-help): 0引数で呼ばれた場合に対応．
+	(cal-news): 同上．
+	(cal-record): 同上．
+	(cal-increment-prompt-count): プロンプトの直後の " " は read-only
+	でないように変更．
+
+2002-09-25  Masahiko Sato  <masahiko@moon.kuis.kyoto-u.ac.jp>
+
+	* cal.el (cal-mode): cal-mail-to-report を cal-mail-to-callog
+	に変更．
+	(cal-exit): 同上．
+	(cal-increment-prompt-count): log buffer に書き込むときに，行頭で
+	なければ "\n" を追加するようにした．
+
+	* cal-util.el (cal-mail-to-callog): cal-mail-to-report から変更．
+
+	* cal-site.el (cal-kougi-address): cal@sato に変更
+	(cal-log-address): callog@sato に変更．cal@sato 学生からのメールを受け付ける．
+	callog@sato 演習の log のため．
+
+2002-09-23  Masahiko Sato  <masahiko@debian>
+
+	* cal.el (cal-check-first-arg): defgame のときの処理を改善．
+	(cal-play): debug. 毎回，ファイルを再ロードして評価するようにした．
+
+2002-09-19  Masahiko Sato  <masahiko@dyna>
+
+	* cal.el (cal-rules): debug
+
+	* cal-exp.el (exp-list-get-last): dt-list-get-last moved from
+	parser.el  and modified.
+	(exp-list-get-last2): new function.
+
+2002-09-14  Masahiko Sato  <masahiko@dyna>
+
+	* cal.el (cal-mode): game TeX を load するようにした．
+
+2002-09-09  Masahiko Sato  <masahiko@debian>
+
+	* cal.el (cal-previous-input): now handles, 0-ary commands.
+
+2002-09-08  Masahiko Sato  <masahiko@debian>
+
+	* cal.el (cal-looking-at): debug
+
+2002-09-05  Masahiko Sato  <masahiko@debian>
+
+	* cal.el (cal-Yields): 「→」を挿入する関数．
+
+2002-09-04  Masahiko Sato  <masahiko@debian>
+
+	* cal.el (cal-syntax): new function
+	(cal-rules): new function
+	(cal-command-0): list of 0-ary commands.
+	(cal-process-command): modified to be able to handle 0-ary
+	commands.
+	(cal-return): same as above.
+	(cal-looking-at): modified to check if looking at PATTERN
+	exactly.
+	(cal-arg-region): optional argument NET-STR を与えたおきには
+	region ではなく string を返すように変更．
+
+2002-09-04  Masahiko Sato  <masahiko@moon.kuis.kyoto-u.ac.jp>
+
+	* cal-develop.el (cal-quote-string): バッファ中の 「" ... "」 の
+	形の文字列を 「\」 で quote する関数． 結果は 「\" ... \"」 となる．
+
+	* cal.el (cal-load-game): cal-load-Game を改名，旧 cal-load-game
+	を廃止．
+	(cal-check): 上の変更に対応する変更．
+	(cal-check-first-arg): 同上．
+	(cal-games-in-play): 現在のセッションで実行中のゲームのリスト．新しいゲームを
+	load すると追加される．
+	(cal-parse-defs): optional argument SYNTAX-ONLY を追加．この場合，
+	tokens と syntax だけをパースする．
+	(cal-current-prompt): プレイ中のゲームをプロンプトに表示するように変更．
+	(cal-previous-input): 上記の変更に対応する手当．
+	(cal-prompt-pattern): プロンプトの regular expression をコンスタントと
+	して定義．"^CAL[^ ]* <%s>"
+	(cal-defgame): 定義したゲームをファイルに書き込むように変更．cal-games-in-play
+	も必要があれば name を追加．
+
+2002-09-03  Masahiko Sato  <masahiko@debian>
+
+	* cal.el (cal-mode): 関数 cal-load が cal-load-file に変更
+	になったことに対応．
+	(cal-load): 導出ゲームを load するコマンド．
+	(cal-check-first-arg): コマンド defgame の追加に対応．
+	(cal-return): 2引数コマンドの処理を変更し，エラーの位置情報に対応．
+	(cal-previous-input): debug
+
+2002-09-02  Masahiko Sato  <masahiko@debian>
+
+	* cal-util.el (cal-load-file): 関数名を cal-load から変更
+
+	* cal.el (cal-check-first-arg): コマンド defgame の第一引数を
+	チェックするようにした．
+	(cal-defgame): cal command. 導出ゲームを定義する．
+	(cal-load-Game): debug
+	(cal-parse-defs): 引数としてゲームの名前をとるように変更．
+
+2002-09-01  Masahiko Sato  <masahiko@debian>
+
+	* cal.el (cal-parse-defs-body): ゲームの定義ファイルの形式の変更
+	に対応．
+	(cal-toklist-region): debug
+	(cal-parse-defs): debug. cal-parse-defs-body を廃止．
+
+2002-08-29  Masahiko Sato  <masahiko@debian>
+
+	* cal.el (cal-demo-dir): デモ用の例がある directory
+	(cal-demo-on): デモを実行中かどうかの flag
+	(cal-demo-command): デモファイル中のコマンドかどうかの flag
+	(cal-mk-regexp): コマンドのリストから，それらにマッチする regexp
+	をつくる関数．
+	(cal-process-command): 個々のコマンドの実行を分離．
+	(cal-ok): コマンド ok を処理する関数．
+	(cal-bye): コマンド bye を処理する関数．
+	(cal-check): コマンド check を処理する関数．
+	(cal-demo): コマンド demo を処理する関数．
+	(cal-get-a-command): demo の処理で用いる関数．
+	(cal-return): demo の処理を追加．
+	(cal-game): コマンド game を処理する関数．
+	(cal-mode): cal-demo-on を nil にした．
+
+2002-08-29  Masahiko Sato  <masahiko@moon.kuis.kyoto-u.ac.jp>
+
+	* cal.el (cal-mode): cal-current-game を nil にセットする
+	ように変更
+	(cal-key-help): 「y:⇒」を追加．
+	(cal-looking-at): posix-looking-at を使うように変更．
+
+2002-08-27  Masahiko Sato  <masahiko@debian>
+
+	* cal.el (cal-return): error のときに EPOS があればエラーの部分の
+	表示の色を変えるようにした．
+	(cal-string-closure): 新関数．
+	(cal-exp-region): 新関数．
+	(cal-unit-core-region): 新関数．
+
+2002-08-25  Masahiko Sato  <masahiko@debian>
+
+	* cal.el (cal-return): condition-case により，エラーが発生したときに，
+	EPOS にカーソルを移動できるようにした．
+	(cal-mode): 基本的な token の定義を deftoken で与えることにした．
+	(DefPrimExpPat): 「&」を追加 (and を & で parse できるように)
+
+2002-08-24  Masahiko Sato  <masahiko@debian>
+
+	* cal.el (cal-close-bracket): 改訂版
+	(cal-mode): (add-hook 'after-change-functions 
+	'cal-after-change-funtion nil t) を追加
+	(cal-after-change-function): in-box で font-lock を実行(予定)
+	(cal-variable-face): 変数の face を追加
+
+2002-08-21  Masahiko Sato  <masahiko@moon.kuis.kyoto-u.ac.jp>
+
+	* cal.el (cal-insert-string): cal-insert-face で STRING を挿入する．
+	(cal-open-bracket): コマンドの引数を delimit する場合は
+	cal-insert-string を用いて 「[」を挿入するように変更．
+	(cal-close-bracket): コマンドの引数を delimit する場合は
+	cal-insert-face で「]」を挿入するように変更．
+	(cal-return): cal-insert-string で「[」を挿入．
+	(cal-mode-map): cal-colon を廃止．
+
+2002-08-14  Masahiko Sato  <masahiko@debian>
+
+	* cal.el (cal-load-Game): .Gm ファイルをロードする．
+
+2002-08-08  Masahiko Sato  <masahiko@debian>
+
+	* cal.el (cal-load-game): nf-game-list
+	をロードしたゲームの名前にセットするようにした．
+
+2002-08-04  Masahiko Sato  <masahiko@debian>
+
+	* cal.el (cal-exit): cal-current-game
+	を nil にする．
+
+2002-07-25  Masahiko Sato  <masahiko@moon.kuis.kyoto-u.ac.jp>
+
+	* cal.el (cal-process-command): buffer-substring
+	を buffer-substring-no-properties に変更．
+	(cal-process-command): コマンド check で game の名前が未定義のとき，
+	その名前を hilight するようにした．
+
+2002-07-24  Masahiko Sato  <masahiko@moon.kuis.kyoto-u.ac.jp>
+
+	* cal.el (max-specpdl-size): default の 900 を 2000 に変更
+
+2002-07-23  Masahiko Sato  <masahiko@moon.kuis.kyoto-u.ac.jp>
+
+	* cal.el (cal-current-game): 現在の導出ゲームの名前を保持する変数
+	
+;; CAL version 5.0 of Tue Jul  9 15:54:18 2002
+;; nf.el でチェッカーを実装．
+;; color 化
+
+;; CAL version 4.9 of Mon Jun 25 11:25:54 2001
+;; ひとつの session で証明した定理は list に保存して、session 終了時に
+;; file に save する。(cal-new-thms)
+;; これらの定理は property list にも登録する．
+;; cal-get-thm： 定理が property list に登録されていれば，それを利用し，
+;; そうでなければ，保存されているファイルを参照し，property list にも
+;; 登録する．
+;;
+;; 定理の名前のリストは，cal-thm-name-list として record file に保存し，
+;; 個々の定理の導出は，その定理の名前のファイルに保存する．これらは，
+;; cal-exit で実行する．
+
+;; CAL version 4.8 of Mon Jun 11 13:53:53 2001
+;; cal-debugger-list で cal-debug.el を load するかどうかを判定する
+;; ようにした．
+
+;; CAL version 4.7 of Thu Jun  7 13:04:15 2001
+;; cal-exit: cal-cp の直前に (sit-for 1) を追加
+
+;; CAL version 4.6 of Tue Jun  5 10:35:15 2001
+;; cal-check-solved: を追加
+;; 変数 *csl* (internal form of cal-solved-list) を追加
+
+;; CAL version 4.5 of Mon May 21 10:48:49 2001
+;; 最後に kill-buffer するバッファを追加。
+
+;; CAL version 4.4 of Wed Apr 25 10:56:12 2001
+;; cal-record: debug
+
+;; CAL version 4.3 of Sat Apr 21 01:03:38 2001
+;; cal-record: private install に対応
+
+;; CAL version 4.2 of Mon Apr 16 14:34:01 2001
+;; cal-public-record-file と cal-record-fie を分離。
+
+;; CAL version 4.1 of Fri Apr 13 15:32:18 JST 2001
+;; site specific -> cal-site.el
+
+;; CAL version 3.27 of Fri Feb  9 17:45:22 2001
+;; cal-get-def: 仮定列を省略せずに返すように変更.
+;; cal-get-def-internal: 仮定列の変数だけをとりだした列と定義本体を返す関数
+;; を追加
+
+;; CAL version 3.26 of Tue Jan 30 17:12:58 2001
+;; コマンド名「theorem」を削除
+
+;; CAL version 3.25 of Sat Jan 20 10:21:36 2001
+;; cal-check-thm: theorem の登録形式の変更にともなう修正
+;; カスタム化可能変数 cal-expand-long を追加
+
+;; CAL version 3.24 of Wed Jan 10 10:40:01 2001
+;; ch7{a,b,c,d}.el, ch8a.el を load するようにした．
+
+;; CAL version 3.23 of Tue Jan  2 17:33:42 2001
+;; cal-process-command (Theorem): 導出も保存するようにした．
+
+;; CAL version 3.22 of Sat Dec 23 14:23:30 2000
+;; cal-process-command: 算術の証明項を処理できるようにした．
+;; cal-list-theorem: 算術の証明項を処理できるようにした．
+
+;; CAL version 3.21 of Tue Dec 12 20:53:06 2000
+;; cal-process-command, cal-add-def, cal-add-thm: 定義，定理の名前を
+;; 文法に追加する部分を logic.def に移動した．
+
+;; CAL version 3.20 of Sun Dec 10 20:11:50 2000
+;; cal-add-thm: rule-name の変更に対応
+
+;; CAL version 3.19 of Thu Dec  7 22:58:17 2000
+;; cal-arith-term-fmrn-deriv: (cal-arith-term-deriv を改名)
+;; cal-arith-prop-fmrn-deriv: (cal-arith-form-deriv を改名)
+
+;; CAL version 3.18 of Wed Dec  6 12:14:14 2000
+;; ArithTermFrmn, ArithPropFrmn, ArithProof: を追加
+
+;; CAL version 3.17 of Tue Dec  5 22:54:02 2000
+;; cal-word-chars: "-"を追加
+
+;; CAL version 3.16 of Sun Dec  3 15:55:32 2000
+;; cal-prop-proof-red-deriv: コードを修正
+
+;; CAL version 3.15 of Wed Nov 22 14:28:39 2000
+;; completion word: projection -> proj に訂正
+
+;; 3.14 of Sun Nov 19 12:41:11 2000
+;; cal-data.el: cal-exp.el と名前を変更して include
+;; 変数 cal-wild-card を exp-wild-card と改名．
+
+;; 3.13 of Sat Nov 18 12:32:49 2000
+;; cal-subst-deriv: optional argument PREDICATE を追加．正解の条件判定に
+;; 使う．
+;; cal-eq-in-makes: subst judgment の in 項と makes 項が同じかをチェック．
+;; cal-data.el をロードするようにした．
+;; cal-wild-card: cal-data.el に移動
+
+;; 3.12 of Fri Nov 17 17:49:46 2000
+;; cal-process-command: コマンド variable を修正．定数かどうかもチェックする
+;; ように変更．
+
+;; 3.11 of Thu Nov 16 10:53:42 2000
+;; ch6b.el, ch6c.el をロードするようにした．
+;; cal-lambda-term-red-deriv: 関数を追加
+;; コマンド LambdaTermRed を追加
+;; cal-prop-proof-red-deriv: 関数を追加
+;; コマンド PropProofRed を追加
+;; cal-command-exp: string A が string B の subword のときは，文字列として
+;; 長い方を前に置くようにした．
+
+;; 3.10 of Wed Nov 15 21:31:53 2000
+;; cal-prop-proof-deriv:
+;; cal-arith-proof-deriv: 仮定列が列になったので，calch-hyp-seq-eq を
+;; equal で代用可能になった．
+;; cal-wild-card-op: 値を ((op "WILD_CARD_OP")) に変更
+;; cal-exp-deriv: calch-exp-deriv に├なしの conc を渡せばよくなった．
+
+;; 3.9 of Mon Nov 13 10:57:27 2000
+;; completion-words に LambdaTerm, LambdaTermFrmn を追加
+;; 関数 cal-lambda-term-frmn を追加．
+;; コマンド LambdaTermFrmn を追加
+;; 関数 cal-exp-deriv を追加．
+;; コマンド Exp を追加
+;; cal-return: since で改行したとき，since の前で最後の in をサーチする
+;; ように変更．
+
+;; 3.8 of Sun Nov 12 21:27:27 2000
+;; チェッカーの実装に対応
+;; cal-word-chars を "_a-zA-Z" に変更．これまでは "a-zA-Z_-"
+;; 関数 cal-const-p を追加．STRING が定数かどうかをチェックする．
+
+;; 3.7 of Wed Nov  1 10:28:31 2000
+;; cal-record: record file の最初の日付も処理できるように修正
+
+;; 3.6 of Fri Oct 27 11:37:14 2000
+;; deriv 関係の関数の名前および cal のコマンド名を，導出ゲームの名前と
+;; 一致させた．
+;; abbrev-deriv -> Abbrev
+;; prop-form-deriv -> PropFrmn
+;; prop-proof-deriv -> PropProof
+;; cal-prop-form-deriv -> cal-prop-frmn-deriv
+;; lambda-term-deriv -> LambdaTerm
+
+;; 3.5 of Thu Oct 26 10:54:44 2000
+;; cal-solved-list をソートして出力するようにした．
+;; cal-return: プロンプトの前での改行をエラーにした．
+;; cal-check-user-id: string-match で 200x も受け付けるようにした．
+;; 変数 cal-chown を導入
+
+;; 3.4 of Wed Oct 25 21:54:35 2000
+;; cal-prop-form-deriv, cal-prop-proof-deriv: logic.def の変更に対応
+;; cal-use-arrow-key: default を nil にした．
+;; cal-find-open-pare: bracket [] も処理するようにした．
+;; cal-indent: bracket [] も処理するようにした．
+;; cal-close-bracket: 対応する括弧の blink と indentation をするようにした．
+
+;; 3.3 of Tue Oct 24 16:54:10 2000
+;; checker の実装に対応して load するファイルを指定．
+;; 関数 cal-abbrev-deriv を追加．
+;; CAL command abbrev-deriv を追加．
+
+;; 3.2 of Sat Oct 14 21:47:40 2000
+;; cal-in-box: 全面的書き換え
+;; cal-open-bracket: in-box でも挿入可能にした．
+;; cal-close-bracket: 挿入した bracket が box を close するときにのみ
+;; cal-return を call するようにした．
+
+;; 3.1 of Fri Oct 13 16:16:02 2000
+;; cal-mode: cal-no-of-news を必ずセットするようにした．
+;; cal-return: 導出の入力で改行の直前が「since」のときには
+;; judgment の結論を自動的に挿入するようにした．
+
+;; 2.14 of Sat Feb 12 14:39:38 2000
+;; 関数 cal-extend-prim-exp-list, cal-insert-by-length を追加．
+;; PrimExpList を拡大する部分をすべて変更．
+;; 関数 cal-eval を追加．
+
+;; 2.13 of Mon Dec 20 21:34:57 1999
+;; 変数 cal-command-exp, cal-command-exp-1: myrecord を追加.
+
+;; 2.12 of Sat Dec 18 16:24:44 1999
+;; cal-process-command: コマンド myrecord を追加
+;; 関数 cal-myrecord を追加
+
+;; 2.11 of Mon Dec 13 18:04:08 1999
+;; cal-process-command: コマンド red-deriv を追加
+
+;; 2.10 of Sun Dec 12 13:18:13 1999
+;; ch8a をロードするようにした．
+;; cal-arith-term-deriv, cal-arith-form-deriv: checker がチェックに成功
+;; したときの結果が nil になることに対応して変更．
+
+;; 2．09 of Sat Dec  4 12:42:38 1999
+;; cal-inbox-completion-words: "ctdc", "mon" を削除. "s_elim" を
+;; "succ_elim" に変更．
+
+;; 2.08 of Fri Dec  3 16:43:41 1999
+;; cal-inbox-completion-words に keep を追加
+
+;; 2.07 of Thu Dec  2 16:16:34 1999
+;; ch6c, ch7{a,b,c,d} をロードするようにした.
+
+;; 2.06 of Sun Nov 28 14:51:06 1999
+;; ch6{a,b} をロードするようにした.
+;; keyword 「pull」を除去
+;; コマンド push-deriv, subst-deriv を追加
+;; cal-push-pull-deriv, cal-subst-deriv: チェッカーがチェックに成功したときに
+;; nil を返すようになったことに対応
+;; cal-colon: 変数がλの直後のときには何もしないで「:」を挿入するようにした．
+
+;; CAL version 2.05 of Thu Nov  4 11:09:11 1999
+;; cal-problem-no: 「2-4」のように複数の問題を指定したときには，
+;; 最初の "2" を返すようにした．
+
+;; CAL version 2.04 of Fri Mon Oct 25 18:30:18 1999
+;; コマンド "Answer" を入力したときに, 直前のコマンドが "Problem" のときは,
+;; そのときに指定した問題番号を自動的に補完するようにした.
+
+;; CAL version 2.03 of Fri Oct 22 15:47:43 1999
+;; 関数名の「is-」をすべて「calch-」に変更．checker の変更に伴う
+;; 処置．
+;; PrimExpList を変更するときは，同時に，PrimExpPat も
+;; (setq PrimExpPat (MkRegExpPattern PrimExpList)) により変更する
+;; ようにした．
+;; cal-error: バッファを *cal* にセットするようにした．
+;; cal-prop-form-deriv: error でなく cal-error を call するようにした．
+
+;; CAL version 2.02 of Sat Oct 16 16:05:30 1999
+;; コマンド prop-form-deriv を追加した.
+
+;; CAL version 2.01 of Wed Oct 13 23:35:10 1999
+;; isle での log directory の構成の変更に対応した．
+;; 以下の変更に対応した．
+;; 予約語の変更： conj_ -> and_, disj_ -> or_, suc -> succ
+;; rule-name の追加: plus_0, plus_s, times_0, times_s
+;; mkdir, touch, chmod は isle にあわせて，defvar でセットした．
+
+;; CAL version 1.27 of Mon Feb 15 00:10:35 1999
+;; コマンド eval-proof-term を追加した.
+
+;; CAL version 1.26 of Sat Jan 30 19:51:52 1999
+;; cal-proof-term-deriv: derivation でなく, 特化した, proof-term-deriv
+;; として parse するように変更した.
+;; cal-add-thm: 同様に arith-hyp-judgment として parse するようにした.
+;; cal-add-them, cal-get-thm: 定理の判断の parse を cal-get-thm のときに
+;; おこなうようにした.
+
+;; CAL version 1.25 of Thu Jan 28 00:14:38 1999
+;; 命題論理式, 算術論理式, 項の同一性を判定するコマンドを追加した.
+;; eq-prop-form, eq-arith-form, eq-term
+
+;; CAL version 1.24 of Sat Jan 23 18:19:07 1999
+;; cal-arith-proof-deriv: 不要な部分を削除
+;; cal-proof-term-deriv を追加
+;; 定義, 定理の登録により, 定義, 定理の名前を inbox-completion-words に
+;; 追加するようにした.
+;; 定義, 定理につける名前が1文字のときにはエラーにするようにした.
+;; cal-in-box: cal-current-command を毎回 set するようにした.
+
+;; CAL version 1.23 of Mon Jan 18 14:19:48 1999
+;; cal-check-user-id を追加
+
+;; CAL version 1.22 of Wed Jan 13 22:32:56 1999
+;; cal-arith-proof-deriv: conc-str を parse する category の間違いを修正.
+
+;; CAL version 1.21 of Mon Jan 11 23:45:13 1999
+;; cal-arith-term-deriv を追加
+;; cal-arith-form-deriv を追加
+
+;; CAL version 1.20.3 of Tue Dec 29 15:02:18 1998
+;; cal-arith-proof-deriv を追加
+
+;; CAL version 1.20.2 of Mon Dec 28 15:09:26 1998
+;; Theorem command, list-theorem, list-definition, cal-add-thm を定義
+;; Definition command
+;; cal-add-def を定義した.
+
+;; CAL version 1.19: Wed Dec 16 22:42:29 1998
+
+;; inbox-completion に pull を追加.
+
+;; checker/print.elc をロードするようにした.
+;; command Theorem, list-theorem, rename-theorem, remove-theorem を追加
+;; cal-process-command を変更
+;; 関数 cal-check-first-arg を追加. 2引数のコマンドについて, 第1引数を
+;; 入力した時点でチェックするようにした.
+
+;; CAL: Version 1.17 of November 18, 1998.
+;; check5c.el を load するようにした.
+;; cal-lambda-term-deriv を追加. 定数 cal-wild-card-op を導入.
+
+;; CAL: Version 1.16 of November 17, 1998.
+;; cal-completion, cal-colon を修正
+;; cal-Problem の引数が nil のときを修正.
+
+;; CAL: Version 1.15 of November 16, 1998.
+;; completion word に thru を追加.
+;; 関数 cal-push-deriv を追加. optional argument の conc で wild card
+;; を指定できる.
+;; 関数 cal-prop-proof-deriv を改良.
+
+;; CAL: Version 1.14 of November 14, 1998.
+;; "\[" を挿入するときに正しいコマンドがあるかをチェックするようにした.
+;; 区間を指定して Problem, news を表示できるようにした.
+
+;; CAL: Version 1.13 of October 30, 1998.
+;; cal-colon を修正. box から出ないようにした.
+
+;; CAL: Version 1.12 of October 30, 1998.
+;; cal-record を追加
+
+;; CAL: Version 1.11 of October 29, 1998.
+;; cal-undo を追加.
+
+;; CAL: Version 1.10 of October 27, 1998.
+;; parser の出すエラーメッセージの先頭に「Syntax Error: 」を追加した.
+
+;; CAL: Version 1.09 of October 26, 1998.
+;; mail でのレポートの Subject に cal-session-count を加えた.
+
+;; CAL: Version 1.08 of October 26, 1998.
+;; cal-insert-with-comments を廃止して, cal-inser-lines で置き換えた.
+;; command に unsolved を追加した.
+
+;; CAL: Version 1.07 of October 25, 1998.
+;; command: prop-proof-deriv を追加.
+
+;; CAL: Version 1.06 of October 23, 1998.
+;; CAL: Version 1.05 of October 22, 1998.
+;; CAL: Version 1.04 of October 21, 1998.
+;; CAL: Version 1.03 of October 19, 1998.
+;; CAL: Version 1.02 of October 17, 1998.
+
+

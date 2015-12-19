@@ -1,0 +1,62 @@
+;; Derivation Game LA:
+;; defined by Masahiko Sato at Tue Sep 17 15:23:48 2002
+
+;; this game defines simple type theory with Lists and Arrows.
+
+tokens[
+
+  constant ::= "type" | "list" ;
+  operator ::= "¦Ë" | "|" | "¢ª" | "=" ;
+
+]
+
+syntax[
+
+  bj ::= infix(type, ":", "type")
+  | infix(type, ":", prefix("list", paren("(", "type")))
+  | infix(term, ":", type)
+  | infix(term, "=", term)
+  ;
+
+  type ::= var
+  | paren("[", infix(type, "|", list-type))
+  | list-type
+  | infix(type, "¢ª", type)
+  ;
+
+  list-type ::= var
+  | paren("[", list(type, ",")) ;
+
+  term ::= varref
+  |  prefix(var, paren("[", list(prop, ",")))
+     & eval $(cons 'sapp TREE)
+  | paren("[", infix(term, "|", list-term))
+  | list-term
+  | prefix("¦Ë", prefix(paren("(", infix(var, ":", type)),
+                        paren("[", term)))
+    & eval
+      $(let ((q (first TREE))
+             (var (second (first (second TREE))))
+             (body (second (second TREE))))
+        (list q (mAbs var body)))
+  ;
+
+  list-term ::= varref
+  | paren("[", list(term, ",")) ;
+
+]
+
+rules[
+
+  "nilL"():		[] : list(type) :- ;
+  "consL"(A, L): 	[A | L] : list(type) :- A : type, L : list(type) ;
+
+  "list"(L):		L:type :- L:list(type) ;
+  "arrow"(A, B):	A¢ªB:type :- A:type, B:type ;
+
+  "nil"():		[]:[] :- ;
+  "cons"(a, l):		[a|l]:[A|L] :- A:type, L:list(type), a:A, l:L ;
+  "lambda"(f, A, B):	¦Ë(x:A)[f[x]]:A¢ªB :- A:type, B:type,
+  			  (x)[x:A ¢Í f[x]:B] ;
+
+]

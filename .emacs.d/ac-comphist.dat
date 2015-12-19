@@ -1,0 +1,34 @@
+((("okfile" .
+   [0 0 0 0 0 2])
+  ("UTF" .
+   [0 0 2])
+  ("errfile" .
+   [0 0 0 0 2 0 1])
+  ("utf8byte" .
+   [0 0 1 0 0 0 0 2])
+  ("shortnameE" .
+   [0 0 0 0 0 0 0 0 0 1])
+  ("URLSUFFIX" .
+   [0 0 0 0 0 0 0 0 1])
+  ("URLPREFIX" .
+   [0 0 0 0 0 0 0 0 1])
+  ("URL" .
+   [0 0 2])
+  ("frame-width" .
+   [0 0 0 0 0 0 0 1 0 0 1])
+  ("frame" .
+   [0 0 0 0 2])
+  ("describe-" .
+   [0 0 0 0 0 0 1 0 0])
+  ("LOCALNET" .
+   [0 0 0 0 0 0 0 1])
+  ("getValue" .
+   [0 0 0 0 0 0 0 1])
+  ("FeatureExtraction" .
+   [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2])
+  ("candidate" .
+   [0 0 0 0 0 0 0 0 2])
+  ("current" .
+   [0 0 0 0 0 0 1])
+  ("renzoku" .
+   [0 0 0 0 0 0 1])))

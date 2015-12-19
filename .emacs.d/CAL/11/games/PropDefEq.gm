@@ -1,0 +1,144 @@
+;; Derivation Game PropDefEq:
+;; defined by Masahiko Sato at Thu Apr 10 17:23:25 2003
+;; defined by Masahiko Sato at Tue Jan 14 17:18:27 2003
+;; defined by Masahiko Sato at Wed Dec  4 22:46:42 2002
+;; defined by Masahiko Sato at Mon Dec  2 22:41:32 2002
+;; defined by Masahiko Sato at Tue Nov 26 21:25:24 2002
+;; defined by Masahiko Sato at Wed Nov 20 21:18:21 2002
+;; defined by Masahiko Sato at Tue Nov 19 21:50:31 2002
+;; defined by Masahiko Sato at Mon Nov 18 23:26:41 2002
+;; defined by Masahiko Sato at Sun Nov 17 21:35:54 2002
+;; defined by Masahiko Sato at Sat Nov 16 23:17:35 2002
+;; defined by Masahiko Sato at Thu Nov 14 22:23:10 2002
+;; defined by Masahiko Sato at Tue Nov 12 22:19:50 2002
+;; defined by Masahiko Sato at Mon Nov 11 22:15:37 2002
+;; defined by Masahiko Sato at Sun Nov 10 22:32:36 2002
+
+tokens[
+
+  constant ::= "¢¿" | "¢Ê" | "¢Ë" | "¢Ì" | "¢Ý" 
+  | "variable" | "constant" | "nonvoid" | "nv-varseq" | "varseq" |  "exp" 
+  | "closed-exp" | "is-in" | "unit-prop" | "not-prop" | "and-prop"
+  | "or-prop" | "prop" | "denotes"
+  | "judg" | "s-judg" |"b-judg" ;
+  
+  operator ::= "¢ª" | "=" | "¢á" ;
+
+]
+
+syntax[
+
+  bj ::= infix(infix(term, "¢ª", term), ":",
+               ("unit-prop" | "not-prop" | "and-prop" | "or-prop" | "prop"
+                | "s-judg" | "b-judg" | "judg"))
+  | infix(infix(term, "¢á", term), ":", "prop")
+  | infix(term, "=", term)
+  | infix(term, ":", "variable") 
+  | infix(term, ":", "constant") 
+  | infix(term, ":", "nonvoid") 
+  | infix(term, ":", "nv-varseq") 
+  | infix(term, ":", "varseq") 
+  | infix(term, ":", "closed-exp") 
+  | infix(term, "exp", term)
+  | infix(term, "is-in", term)
+  | infix(infix(term, ":", "prop"), "denotes", term)
+  ;
+
+  term ::= varref
+  | svar ;; for meta check
+  | paren("¡Ô", unitlist)
+  ;
+
+  tex-bj ::= tex-infix(tex-infix(tex-term, "¢ª", tex-term), ":",
+               ("unit-prop" | "not-prop" | "and-prop" | "or-prop" | "prop"
+                | "s-judg" | "b-judg" | "judg"))
+  | tex-infix(tex-infix(tex-term, "¢á", tex-term), ":", "prop")
+  | tex-infix(tex-term, "=", tex-term)
+  | tex-infix(tex-term, ":", "variable") 
+  | tex-infix(tex-term, ":", "constant") 
+  | tex-infix(tex-term, ":", "nonvoid") 
+  | tex-infix(tex-term, ":", "nv-varseq") 
+  | tex-infix(tex-term, ":", "varseq") 
+  | tex-infix(tex-term, ":", "closed-exp") 
+  | tex-infix(tex-term, "exp", tex-term)
+  | tex-infix(tex-term, "is-in", tex-term)
+  | tex-infix(tex-infix(tex-term, ":", "prop"), "denotes", tex-term)
+  ;
+
+  tex-term ::= tex-varref
+  | tex-paren("¡Ô", tex-unitlist)
+  ;
+
+]
+
+rules[
+
+  "variable"(al): al:variable :- $(cal-q-var-p al) ;
+  "constant"(ga): ga:constant 
+      :- $(cal-q-exp-const-p ga '("¢¿" "¢Ê" "¢Ë" "¢Ì" "¢Ý" "nil")) ;
+  "nonvoid"(mu): mu:nonvoid :- $(cal-q-nonvoid-p mu) ;
+
+  "nv-varseq1"(al): al: nv-varseq :- al:variable ;
+  "nv-varseq2"(Ga,al): ¡Ô^Ga,^al¡Õ:nv-varseq :- Ga:nv-varseq, al:variable ;
+
+  "varseq0"(): ¡Ô¡Õ:  varseq :- ;
+  "varseq1"(Ga): Ga:  varseq :- Ga:nv-varseq ;
+
+  "is-in"(mu,nu): mu is-in nu :- $(cal-q-in mu nu) ;
+
+  "var-exp"(Ga,al): Ga exp al :- Ga:varseq, al:variable, al is-in Ga;
+  "const-exp"(Ga,ga): Ga exp ga :- Ga:varseq, ga:constant ;
+  "pair-exp"(Ga,ph,ps): Ga exp ¡Ô<^ph|^ps>¡Õ:- Ga exp ph, Ga exp ps ;
+  "abs-exp0"(al,ph): ¡Ô¡Õ exp ¡Ô(^al)[^ph]¡Õ :- al:variable, al exp ph ;
+  "abs-exp1"(Ga,al,ph): Ga exp ¡Ô(^al)[^ph]¡Õ :- al:variable, ¡Ô^Ga, ^al¡Õexp ph ;
+  
+  "closed-exp"(ph): ph:closed-exp :- ¡Ô¡Õexp ph ;
+ 
+  "var-list"(al): al = al :- al:variable ;
+  "const-list"(ga): ga = ga :- ga:constant ;
+  "pair-list"(mu,nu,ph,ps): ¡Ô<^mu | ^nu>¡Õ= ¡Ô<^ph | ^ps>¡Õ:-
+      mu=ph, nu=ps ;
+  "abs-list"(al,mu,ph): ¡Ô(^al)[^mu]¡Õ=¡Ô(^al)[^ph]¡Õ:- al:variable, mu = ph ;
+  "nil-list"(): ¡Ô<>¡Õ= ¡Ônil¡Õ:- ;
+  "cons-list0"(mu,ph): ¡Ô<^mu>¡Õ=¡Ô<^ph|nil>¡Õ:- mu=ph ;
+  "cons-list1"(mu,nu,ph,ps): ¡Ô<^mu,^nu>¡Õ=¡Ô<^ph|^ps>¡Õ:- 
+      mu=ph, nu:nonvoid,¡Ô<^nu>¡Õ=ps ;
+
+  "unit-prop1"(): ¡Ô¢Ý¡Õ¢ª ¡Ô¢Ý¡Õ:unit-prop :- ;
+  "unit-prop2"(al): al ¢ª al:unit-prop :- al:variable ;
+  "unit-prop3"(si,mu): ¡Ô(^si)¡Õ¢ª mu : unit-prop :- si ¢ª mu : prop ;
+  "unit-prop4"(si,mu): ¡Ô[^si]¡Õ¢ª mu : unit-prop :- si ¢ª mu : judg ;
+
+  "not-prop1"(si,mu): si¢ª mu : not-prop :- si ¢ª mu : unit-prop ;
+  "not-prop2"(si,mu): ¡Ô¢Ì^si¡Õ¢ª ¡Ô<¢Ì, ^mu>¡Õ : not-prop :- si ¢ª mu : not-prop ;
+
+  "and-prop1"(si,mu): si¢ª mu : and-prop :- si ¢ª mu : not-prop ;
+  "and-prop2"(si,ta,mu,nu): ¡Ô^si¢Ê^ta¡Õ¢ª ¡Ô<¢Ê, ^mu, ^nu>¡Õ : and-prop
+      :- si ¢ª mu : not-prop, ta ¢ª nu : and-prop ;
+  
+  "or-prop1"(si,mu): si¢ª mu : or-prop :- si ¢ª mu : and-prop ;
+  "or-prop2"(si,ta,mu,nu): ¡Ô^si¢Ë^ta¡Õ¢ª ¡Ô<¢Ë, ^mu, ^nu>¡Õ : or-prop 
+      :- si ¢ª mu : and-prop, ta ¢ª nu:or-prop ;
+
+  "prop1"(si,mu): si¢ª mu : prop :- si ¢ª mu : or-prop ;
+  "prop2"(si,ta,mu,nu): ¡Ô^si¢¿^ta¡Õ¢ª ¡Ô<¢¿, ^mu, ^nu>¡Õ : prop 
+      :- si ¢ª mu : or-prop, ta ¢ª nu:prop ;
+
+  "s-judg1"(al): al ¢ª al:s-judg :- al:variable ;
+  "s-judg2"(si,mu): ¡Ô(^si)¡Õ¢ªmu : s-judg :- si ¢ª mu:judg ;
+  "s-judg3"(al,si,mu): ¡Ô(^al)[^si]¡Õ¢ª¡Ô(^al)[^mu]¡Õ:s-judg
+      :- al:variable, si¢ªmu:judg ;
+  "b-judg"(si,mu): si¢ªmu:b-judg :- si¢ªmu:prop ;
+  "judg1"(si,mu): si¢ªmu:judg :- si¢ªmu:s-judg ;
+  "judg2"(si,mu): si¢ªmu:judg :- si¢ªmu:b-judg ;
+  "judg3"(si,ta,mu,nu): ¡Ô^si¢Í^mu¡Õ¢ª¡Ô<¢Í,^mu,^nu>¡Õ:judg
+      :- si¢ªmu:s-judg, ta¢ªmu:judg;
+  "judg4"(si,ta,mu,nu): ¡Ô^si¢Í^mu¡Õ¢ª¡Ô<¢Í,^mu,^nu>¡Õ:judg
+      :- si¢ªmu:b-judg, ta¢ªmu:judg;
+  
+  "prop-denotes"(si,ph,mu): si:prop denotes ph :- si ¢ª mu:prop, mu = ph ;
+
+  "prop-defeq"(si,ta,ph): si ¢á ta : prop 
+      :- si:prop denotes ph, ta:prop denotes ph ;
+  
+]

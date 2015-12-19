@@ -1,0 +1,72 @@
+;; Derivation Game HProp:
+;; defined by Masahiko Sato at Fri Apr 11 17:53:09 2003
+;; defined by Masahiko Sato at Thu Apr 10 17:22:41 2003
+;; defined by Masahiko Sato at Tue Nov  5 16:58:26 2002
+
+tokens[
+
+  constant ::= "Ｏ" ;
+  operator ::=  "Ⅶ" | "〨" | "〩" | "十" ;
+
+]
+
+syntax[
+  
+  bj ::= prop
+  |  throw "＞%s＝反湘呿�衛リリ洃═磥牏誘�"
+  ;
+
+;; operators with weaker binding power comes first
+
+prop ::= "Ｏ" & eval $'(Abs ((var "x")) 1 (var 0))
+  ;; the line below is for meta expression
+  |  prefix(var, paren("[", list(prop, ",")))
+     & eval $(cons 'sapp TREE)
+  |  varref
+  |  paren("(", prop)
+  |  infixL(prop, "Ⅶ", prop)
+  |  infixL(prop, "〩", prop)
+  |  infixL(prop, "〨", prop)
+  |  prefix("十", prop)
+  |  throw "＞%s＝反抰鎖匹反丐曰引六氏"
+  ;
+
+  term ::= varref
+  |  "nil"
+  |  throw "＞%s＝反嫩匹反丐曰引六氏"
+  ;
+
+  tex-bj ::= tex-prop ;
+
+  tex-prop ::= "Ｏ" & tex-op
+  ;; the line below is for meta expression
+  |  tex-prefix(tex-var, tex-paren("[", tex-list(tex-prop, ",")))
+  |  tex-varref
+  |  tex-paren("(", tex-prop)
+  |  tex-infixL(tex-prop, "Ⅶ", tex-prop)
+  |  tex-infixL(tex-prop, "〩", tex-prop)
+  |  tex-infixL(tex-prop, "〨", tex-prop)
+  |  tex-prefix("十" & tex-op, tex-prop)
+  ;
+  
+  tex-term ::= tex-varref
+  |  "nil" & tex-op
+  ;
+
+]
+
+rules[
+
+  "MP"(A,B): B :- A, AⅦB ;
+  "Ⅶ1"(A,B): AⅦBⅦA :- ;
+  "Ⅶ2"(A,B,C): (AⅦB)Ⅶ(AⅦBⅦC)Ⅶ(AⅦC) :- ;
+  "〨1"(A,B): AⅦBⅦA〨B :- ;
+  "〨2"(A,B): A〨BⅦA :- ;
+  "〨3"(A,B): A〨BⅦB :- ;
+  "〩1"(A,B): AⅦA〩B :- ;
+  "〩2"(A,B): BⅦA〩B :- ;
+  "〩3"(A,B,C): (AⅦC)Ⅶ(BⅦC)Ⅶ(A〩BⅦC) :- ;
+  "十1"(A,B): (AⅦB)Ⅶ(AⅦ十B)Ⅶ十A :- ;
+  "十2"(A,B): 十AⅦAⅦB :- ;
+
+]

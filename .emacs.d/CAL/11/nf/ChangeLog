@@ -1,0 +1,187 @@
+2005-11-26  Masahiko Sato  <masahiko@localhost.localdomain>
+
+	* nf-exp.el (exp-unit-core-eq): fixed a bug in comparison of
+	paren body.
+
+2003-11-17  Masahiko Sato  <masahiko@debian>
+
+	* nf.el (nf-check-deriv): id, conj rule の処理を分離．
+
+2003-06-23  Masahiko Sato  <masahiko@venus.kuis.kyoto-u.ac.jp>
+
+	* nf.el (nf-append): use nf-member instead of member.
+	(nf-check-derivation): deriv の自由変数がすべて context で宣言されているかをチェック
+	するようにした．
+	(nf-decl-vars): new function.
+	compute list of variables declared in CONTEXT.
+
+2003-02-04  Masahiko Sato  <masahiko@venus.kuis.kyoto-u.ac.jp>
+
+	* nf.el (nf-check-derivation): 導出を検証しているというメッセージを出すようにした．
+
+2003-01-29  Masahiko Sato  <masahiko@venus.kuis.kyoto-u.ac.jp>
+
+	* nf-exp.el (exp-sharp-var-p): new function.
+
+2003-01-27  Masahiko Sato  <masahiko@venus.kuis.kyoto-u.ac.jp>
+
+	* nf-exp.el (nf-seq): new function. meta exp の比較．
+
+2003-01-18  Masahiko Sato  <masahiko@debian>
+
+	* nf.el (nf-intersect-p): new function.
+	(nf-get-rule): 定理に導出の情報を追加したことにともなう変更．
+
+2003-01-16  Masahiko Sato  <masahiko@venus.kuis.kyoto-u.ac.jp>
+
+	* nf.el (nf-get-rule): thm-list も参照するように変更．
+
+2003-01-15  Masahiko Sato  <masahiko@venus.kuis.kyoto-u.ac.jp>
+
+	* nf.el (nf-get-rule): Common.gm のルールもチェックするようにした．
+
+2003-01-02  Masahiko Sato  <masahiko@debian>
+
+	* nf.el (nf-mk-env): listB の長さが listA の長さ以下という条件で
+	env を計算するようにした．
+	(nf-check-deriv): exp-CD-p のときに規則の名前が引数を持つとき，環境の
+	一部を決定して nf-match にかけるようにした．引数の数は規則のパラメータの数以下
+	ならいくつでもよい．
+
+2003-01-01  Masahiko Sato  <masahiko@debian>
+
+	* nf.el (nf-vars2): new function.  meta application 含む meta exp
+	の自由変数を計算する．
+
+2002-12-28  Masahiko Sato  <masahiko@debian>
+
+	* nf.el (nf-check-deriv): 条件判断 H⇒J のチェックのとき，最初に，
+	H の変数が現在の context で宣言されているかをチェックするように修正．
+
+2002-12-12  Masahiko Sato  <masahiko@debian>
+
+	* nf.el (nf-match-qq): 左辺の最初のユニットがメタ変数で，次のユニットが paren
+	のときのコードを修正．
+
+2002-12-06  Masahiko Sato  <masahiko@venus.kuis.kyoto-u.ac.jp>
+
+	* nf.el (nf-check-deriv): conj コマンドを cal-debugger-list のユーザだけ
+	が使えるようにした．
+
+2002-12-01  Masahiko Sato  <masahiko@debian>
+
+	* nf.el (nf-check-deriv): triv rule を id rule に名称変更．
+
+2002-11-26  Masahiko Sato  <masahiko@debian>
+
+	* nf.el (nf-match-simple): lvars を 0 にセットして nf-match を呼ぶよう
+	に修正．
+
+2002-11-08  Masahiko Sato  <masahiko@debian>
+
+	* nf.el (nf-match-qq): unit2 について backtrack する場合の処理の bug
+	を修正．
+
+2002-10-13  Masahiko Sato  <masahiko@dyna>
+
+	* nf.el (nf-check-derivation): error-pos を廃止．
+	(nf-check-deriv): 同上．
+	(nf-match): lhs が Abs で rhs が Abs でないときに fail すること
+	を追加．(bug fix)
+
+2002-10-08  Masahiko Sato  <masahiko@venus.kuis.kyoto-u.ac.jp>
+
+	* nf.el (nf-schematize): bound variable
+	のチェックを追加．params がないときも要再検討．
+
+2002-10-07  Masahiko Sato  <masahiko@venus.kuis.kyoto-u.ac.jp>．
+
+	* nf.el (exp-CD-p): equality を nf-eq でチェックするように変更．
+	(exp-HD-p): equality を nf-eq でチェックするように変更．
+
+2002-10-04  Masahiko Sato  <masahiko@venus.kuis.kyoto-u.ac.jp>
+
+	* nf.el (nf-schematize): optional argument PARAMS
+	を追加．ここで宣言されていない自由変数があればエラーになる．
+	(DefGame): nf-schematize を呼ぶときに params を引数に追加．
+
+2002-10-02  Masahiko Sato  <masahiko@venus.kuis.kyoto-u.ac.jp>
+
+	* nf.el (DefGame): nf-game-list この変数を使わないようにした．
+
+2002-09-29  Masahiko Sato  <masahiko@debian>
+
+	* nf-exp.el (exp-sharp-var-sharps): #変数の # の数を返す．
+
+2002-09-19  Masahiko Sato  <masahiko@dyna>
+
+	* nf-exp.el (exp-varref-var-part): varref が pos-info をもつ場合の
+	bug を fix.
+
+2002-09-01  Masahiko Sato  <masahiko@debian>
+
+	* nf.el (nf-valid-context): 位置情報をセットしてエラーを発行するように変更．
+
+2002-08-28  Masahiko Sato  <masahiko@debian>
+
+	* nf.el (nf-sublist): 位置情報をセットしてエラーを発行するように変更．
+	(nf-check-deriv): 位置情報をもとにエラーを処理するように変更．
+	(nf-deriv-concl): 位置情報をもとにエラーを処理するように変更．
+
+2002-08-27  Masahiko Sato  <masahiko@debian>
+
+	* nf.el (nf-match-qq): equality のチェックを nf-eq に変更．
+	(nf-search-unit-part): equality のチェックを nf-eq に変更．
+	(nf-check-derivation): 証明すべき判断と導出の結論が一致しないときに，エラー
+	の位置を直接画面に表示するようにした．
+
+	* nf-exp.el (exp-push-var): equality のチェックを nf-eq に変更．
+
+	* nf.el (nf-assoc): equality のチェックを nf-eq に変更．
+
+	* nf-exp.el (mabs): equality のチェックを nf-eq に変更．
+
+	* nf.el (nf-check-deriv): 変数, 定数の位置情報を考慮して変更．
+	(nf-sublist): membership を nf-member でチェックするように変更．
+
+	* nf-exp.el: 変数, 定数の位置情報を考慮して変更．
+	(exp-varref-eq): varref 同士の等しさ
+
+2002-08-26  Masahiko Sato  <masahiko@moon.kuis.kyoto-u.ac.jp>
+
+	* nf-exp.el (exp-varref-pos): 変数参照の位置をかえす関数．
+	(exp-unit-eq): ふたつの UNIT を比較する関数．
+
+2002-08-25  Masahiko Sato  <masahiko@debian>
+
+	* nf.el (nf-check-deriv): meta check を実装．
+	(nf-check-deriv): EPOS を (list (1- rule-pos) (length rule-name)) 
+	に set．
+
+2002-08-24  Masahiko Sato  <masahiko@debian>
+
+	* nf.el (exp-CD-rule-pos): 規則の buffer での位置をかえす．
+
+	* nf-exp.el (exp-const-p): tok の場合を除去
+	(nf-eq): OP の比較を変更
+	(exp-op-p): OP かどうかの判定関数
+	(exp-op-eq): OP どうしの比較関数
+
+2002-08-18  Masahiko Sato  <masahiko@debian>
+
+	* nf-exp.el (nf-inst): qq の処理を再帰的にできるように修正．
+
+2002-08-17  Masahiko Sato  <masahiko@debian>
+
+	* nf-exp.el (exp-const-p): S式定数の場合を追加．
+
+2002-08-14  Masahiko Sato  <masahiko@debian>
+
+	* nf.el (DefGame): rule-name を予約語に追加する関数として
+	parser-extend-prim-exxp-pat を用いることにした．
+
+2002-07-24  Masahiko Sato  <masahiko@moon.kuis.kyoto-u.ac.jp>
+
+	* nf.el (DefGame): ゲームの構文を定義するファイルを load することを廃止．
+	これにより，ゲームの syntax, semantics をひとつの file に書けるようになった．
+

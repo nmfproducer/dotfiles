@@ -1,0 +1,61 @@
+(setq PEP
+     (concat CommonConstExp "\\|" CommonOpExp "\\|" CommonOpenExp
+     "\\|" CommonCloseExp))
+
+(DefClass 'tex-var '(and var (eval (caltex-var (second TREE)))))
+
+
+(DefClass 'tex-varref '(and varref (eval (caltex-varref TREE))))
+
+
+(DefClass 'tex-op '(and op (eval (let ((op (second TREE))) (list (quote sexp) (caltex-str-to-tex op))))))
+
+
+(DefClass 'tex-op-R '(and op (eval (let ((op (second TREE))) (list (quote sexp) (concat (caltex-str-to-tex op) "\\;"))))))
+
+
+(DefClass 'tex-op-LR '(and op (eval (let ((op (second TREE))) (list (quote sexp) (concat "\\;" (caltex-str-to-tex op) "\\;"))))))
+
+
+(DefClass 'tex-op-small '(and op (eval (let ((op (second TREE))) (list (quote sexp) (caltex-str-to-tex-small op))))))
+
+
+(DefClass 'tex-unitlist '(and unitlist (eval (caltex-unitlist TREE))))
+
+
+(DefClass 'tex-judgment '(or (and sexp (eval (quote (sexp "")))) tex-varref (catch (tex-prefix tex-var (and (tex-paren "[" (tex-list tex-judgment ",")) (eval (caltex-meta-apply token-list))))) (catch tex-bj) (tex-infix tex-judgment "¢Í" tex-judgment) (tex-prefix "¦°" (tex-prefix (tex-paren "(" (tex-list tex-var ",")) (tex-paren "[" tex-judgment))) (paren "(" tex-judgment) (throw "¡Ö%s¡×¤ÏÈ½ÃÇ¤Ç¤Ï¤¢¤ê¤Þ¤»¤ó")))
+
+
+(DefClass 'tex-derivation '(and (infix-ic dummy "in" (infix-i dummy "since" tex-deriv)) (eval (third TREE))))
+
+
+(DefClass 'tex-deriv '(or tex-var tex-varref (and (infix-ic tex-judgment "by" (postfix tex-op-small (paren "{" (list tex-deriv ";")))) (eval (let ((concl (second (first TREE))) (rule (second (second TREE))) (prems (third TREE))) (if (string= "\\mbox{\\small\\mytt{conj}}" rule) (list (quote sexp) concl) (list (quote sexp) (format "\\infer[%s]{%s}{%s}" rule concl (caltex-list-to-and-list prems))))))) (and (prefix (paren "(" tex-hyp-seq) (paren "[" tex-deriv)) (eval (let ((binders (first TREE)) (body (second (second TREE)))) (list (quote sexp) (format (if vertical "\\ABSv{%s}{%s}" "\\ABS{%s}{%s}") (caltex-list-to-comma-list binders) body)))))))
+
+
+(DefClass 'tex-hyp-seq '(list tex-hyp ","))
+
+
+(DefClass 'tex-hyp '(or tex-var (tex-infix tex-var "::" tex-judgment)))
+
+
+(DefClass 'tex-hyp2 '(or tex-var (and (infix tex-var "::" dummy) (eval (second TREE)))))
+
+
+(DefClass 'tex-hyp-judg '(tex-infix (and tex-hyp-seq (eval (list (quote sexp) (caltex-list-to-comma-list TREE)))) "¨§" tex-judgment))
+
+
+(DefClass 'tex-sexp '(and sexp (eval (list (quote sexp) (caltex-str-to-tex (second TREE))))))
+
+
+(DefClass 'tex-sexp-small '(and sexp (eval (list (quote sexp) (caltex-str-to-tex-small (second TREE))))))
+
+
+(DefClass 'tex-defrule '(and (and (infix (prefix dummy (paren "(" (list var ","))) ":" dummy) (eval (setq META-VARS (mapcar (quote second) (second (second TREE)))))) (tex-infix (tex-prefix tex-sexp (tex-paren "(" (tex-list tex-var ","))) ":" (tex-infix tex-judgment ":-" (tex-list tex-judgment ",")))))
+
+
+(DefClass 'tex-defrule2 '(and (and (infix (prefix dummy (paren "(" (list var ","))) ":" dummy) (eval (unless ITALIC (setq META-VARS (mapcar (quote second) (second (second TREE))))))) (and (infix-ic (prefix tex-sexp dummy) ":" (infix-i tex-judgment ":-" (list tex-judgment ","))) (eval (caltex-defrule2-fun TREE)))))
+
+
+(setq PrimExpPat PEP)
+
+(setq PEP PrimExpPat)

@@ -1,0 +1,10 @@
+(setq PEP
+     (concat CommonConstExp "\\|" CommonOpExp "\\|" CommonOpenExp
+     "\\|" CommonCloseExp))
+
+(setq PrimExpPat PEP)
+
+(DefGame 'Common '(("def-E" (p q) (var "q" 193) (var "p" 198) (sexp (cal-check-def-E p q))) ("def-I" (p q) (var "q" 143) (var "p" 148) (sexp (cal-check-def-I p q))) ("conj" (p) (var "p" 75) (sexp (member user-login-name cal-debugger-list))) ("id" (J) (var "J" 53) (var "J" 58))) t)
+
+
+(setq PEP PrimExpPat)

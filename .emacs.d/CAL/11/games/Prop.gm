@@ -1,0 +1,87 @@
+;; Derivation Game Prop:
+;; defined by Masahiko Sato at Tue Oct  7 18:09:49 2003
+;; defined by Masahiko Sato at Fri Apr 11 17:50:25 2003
+;; defined by Masahiko Sato at Sun Feb  9 22:38:39 2003
+;; defined by Masahiko Sato at Fri Jan  3 20:00:33 2003
+;; defined by Masahiko Sato at Mon Dec  2 22:30:47 2002
+;; defined by Masahiko Sato at Mon Nov 25 15:01:26 2002
+;; defined by Masahiko Sato at Tue Nov 19 14:33:07 2002
+;; defined by Masahiko Sato at Sun Nov  3 12:58:44 2002
+;; defined by Masahiko Sato at Fri Nov  1 16:17:41 2002
+;; defined by Masahiko Sato at Sat Oct 19 16:27:06 2002
+;; defined by Masahiko Sato at Wed Oct 16 18:00:44 2002
+
+tokens[
+
+  constant ::= "Ｏ" ;
+  operator ::=  "Ⅶ" | "〨" | "〩" | "十" ;
+
+]
+
+syntax[
+  
+  bj ::= prop
+  |  throw "＞%s＝反湘呿�衛リリ洃═磥牏誘�"
+  ;
+
+;; operators with weaker binding power comes first
+
+prop ::= "Ｏ"
+  ;; the line below is for meta expression
+  |  prefix(var, paren("[", list(prop, ",")))
+     & eval $(cons 'sapp TREE)
+  |  varref
+  |  svar
+  |  paren("(", prop)
+  |  paren("[", judgment)
+  |  infixL(prop, "Ⅶ", prop)
+  |  infixL(prop, "〩", prop)
+  |  infixL(prop, "〨", prop)
+  |  prefix("十", prop)
+  |  throw "＞%s＝反抰鎖匹反丐曰引六氏"
+  ;
+
+  term ::= varref
+  |  "nil"
+  |  throw "＞%s＝反嫩匹反丐曰引六氏"
+  ;
+
+  tex-bj ::= tex-prop ;
+
+  tex-prop ::= "Ｏ" & tex-op
+  ;; the line below is for meta expression
+  |  tex-prefix(tex-var, tex-paren("[", tex-list(tex-prop, ",")))
+  |  tex-varref
+  |  svar
+  |  tex-paren("(", tex-prop)
+  |  tex-paren("[", tex-judgment)
+  |  tex-infixL(tex-prop, "Ⅶ", tex-prop)
+  |  tex-infixL(tex-prop, "〩", tex-prop)
+  |  tex-infixL(tex-prop, "〨", tex-prop)
+  |  tex-prefix("十" & tex-op, tex-prop)
+  ;
+  
+  tex-term ::= tex-varref
+  |  "nil" & tex-op
+  ;
+
+]
+
+rules[
+   
+  "Ⅶ-I"(P, Q):     PⅦQ :- P 卄 Q ;
+  "Ⅶ-E"(P, Q):        Q :- PⅦQ, P ;
+  "十-I"(P):         十P :- P 卄 Ｏ ;
+  "十-E"(P):          Ｏ :- 十P, P ;
+  "〨-I"(P, Q):     P〨Q :- P, Q ;
+  "〨-EL"(P, Q):       P :- P〨Q ;
+  "〨-ER"(P, Q):       Q :- P〨Q ;
+  "〩-IL"(P, Q):    P〩Q :- P ;
+  "〩-IR"(P, Q):    P〩Q :- Q ;
+  "〩-E"(P, Q, R):     R :- P〩Q, P 卄 R, Q 卄 R ;
+  "Ｏ-I"(P):           Ｏ :- 旭(x)[x] ;
+  "Ｏ-E"(P):           P :- Ｏ ;
+  "卄-E"(P,Q):		Q :- P卄Q, P ;
+  "U-E"(P,a):		P[a] :- 旭(x)[P[x]] ;
+
+]

@@ -1,0 +1,178 @@
+;; Derivation Game Basic:
+;; defined by Masahiko Sato at Mon Oct  6 23:45:10 2003
+;; defined by Masahiko Sato at Sun Feb  9 22:31:56 2003
+;; defined by Masahiko Sato at Tue Feb  4 15:55:16 2003
+;; defined by Masahiko Sato at Wed Jan 29 10:56:13 2003
+;; defined by Masahiko Sato at Mon Jan 13 15:51:13 2003
+;; defined by Masahiko Sato at Fri Jan 10 22:12:15 2003
+;; defined by Masahiko Sato at Fri Jan  3 11:12:12 2003
+;; defined by Masahiko Sato at Sun Dec  8 19:06:41 2002
+;; defined by Masahiko Sato at Tue Dec  3 08:12:16 2002
+;; defined by Masahiko Sato at Mon Nov 25 23:06:46 2002
+
+;; Basic Game file, defining various syntactic classes commonly used
+;; by other Games
+
+syntax[
+  
+  varref-body ::= var
+  | prefix("#", varref-body)
+  ;
+
+  varref ::= svar 
+             & eval 
+               $(if cal-meta TREE (throw 'fail '(fail "Not in Meta-mode")))
+  |  and(varref-body,
+         eval
+         $(let ((list (mk-flat-list TREE)))
+           (if (or (= (length list) 1)
+                   (and (= (length list) 2)
+                        (integerp (second list))))
+               (cons 'var list)
+             (cons 'varref list)))
+         )
+  ;
+
+  $(defun mk-flat-list (tree)
+      ;; TREE == (var "x") or ((op "#X") (var "x"))
+      ;; or ((op "#") ((op "#") (var "x")))
+      (if (atom (car tree))
+          (if (= (length tree) 2)
+              ;; without info on pos
+              (list (second tree))
+            ;; with info on pos
+            (list (second tree) (third tree)))
+        (cons (second (car tree)) (mk-flat-list (second tree)))))
+  ;
+
+  ;; 仮定列
+  hyp-seq ::= 
+    catch(svar 
+          & eval $(if cal-meta TREE (throw 'fail '(fail "Not in Meta-mode"))))
+  | list(hyp, ",")
+  | throw "「%s」は仮定列ではありません" 
+  ;
+
+  hyp ::= var
+  |  infix-ic(var, "::", judgment)
+  |  throw "「%s」は仮定ではありません"
+  ;
+
+  ;; 導出 (derivation)
+  derivation ::=  infix-ic(infix(hyp-seq, "├", judgment), "in",
+                           infix-i(deriv-game-name, "since", deriv)) ;
+  
+  deriv-game-name ::= op ;
+
+  deriv ::= var
+  | varref
+  | and(infix-ic(judgment, "by",
+                 postfix(
+                         (  op
+                          | prefix(op, paren("(", list(rule-arg, ",")))
+                          | throw "by の直後は<規則の名前>が必要です"
+                          ),
+                         paren("{",list(deriv, ";")))),
+        eval $(cons exp-CD TREE))
+  | and(prefix(paren("(", hyp-seq), paren("[", deriv)),
+        eval
+        $(let ((HS (reverse (first TREE))) (b (second TREE)))
+           (while HS
+             (let ((hyp (car HS)))
+               (setq b
+                     (if (exp-var-p hyp)
+                         ;; hyp is a variable
+                         (let ((V (list hyp)))
+                           (cons 'Abs (cons V (mabs V b))))
+                       (let ((V (list (car hyp)))
+                             (h (cdr hyp)))
+                         (list exp-HD h
+                          (cons 'Abs (cons V (mabs V b))))))))
+             (setq HS (cdr HS)))
+          b))
+  | throw "「%s」は導出ではありません"
+  ;
+
+  judgment ::= sexp ;; meta judgment
+  | varref
+  | infix(judgment, "⇒", judgment) ;; hypothetical judgment
+  | prefix-i("Π", prefix(paren("(", list(var, ",")), paren("[", judgment)))
+        & eval
+        $(let ((vars (reverse (first TREE))) (b (second TREE)))
+           (while vars
+             (let ((var (car vars)))
+               (setq b (let ((V (list var)))
+                           (cons 'Abs (cons V (mabs V b))))))
+             (setq vars (cdr vars)))
+          b) ;; universal judgment
+  | paren("(", judgment)
+  ;; the line below is for meta expression
+  | catch(prefix(var, paren("[", list(judgment, ","))))
+    & eval $(if cal-meta
+                (cons 'sapp TREE) ;; for meta check
+              (throw 'fail '(fail "Not in Meta-mode")))
+  | bj
+  | throw "「%s」は判断ではありません"
+  ;
+
+  ;; meta 導出 (meta derivation)
+  meta-derivation ::=  infix-ic(infix(hyp-seq, "├", judgment), "in",
+                           infix-i(deriv-game-name, "since", meta-deriv)) ;
+  
+  meta-deriv ::= var
+  | varref
+  | svar
+  | prefix(svar, paren("[", list(varref, ",")))
+    & eval $(cons 'sapp TREE) ;; for meta check
+  | and(infix-ic(meta-judgment, "by",
+                 postfix(
+                         (  prefix(op, paren("(", list(term, ",")))
+                          | op
+                          | svar ;; for meta check
+                            ;; the line below is also for meta check
+                          | prefix(svar, paren("[", list(varref, ",")))
+                            & eval $(cons 'sapp TREE)
+                          | throw "by の直後は<規則の名前>が必要です"
+                          ),
+                         paren("{",list(meta-deriv, ";")))),
+        eval $(cons exp-CD TREE))
+  | and(prefix(paren("(", hyp-seq), paren("[", meta-deriv)),
+        eval
+        $(let ((HS (reverse (first TREE))) (b (second TREE)))
+           (while HS
+             (let ((hyp (car HS)))
+               (setq b
+                     (if (exp-var-p hyp)
+                         ;; hyp is a variable
+                         (let ((V (list hyp)))
+                           (cons 'Abs (cons V (mabs V b))))
+                       (let ((V (list (car hyp)))
+                             (h (cdr hyp)))
+                         (list exp-HD h
+                          (cons 'Abs (cons V (mabs V b))))))))
+             (setq HS (cdr HS)))
+          b))
+  | throw "「%s」は導出ではありません"
+  ;
+
+  meta-judgment ::= sexp ;; meta judgment
+  | varref
+  | svar
+  | prefix(svar, paren("[", list(varref, ",")))
+    & eval $(cons 'sapp TREE) ;; for meta check
+  | catch(bj)
+  | infix(judgment, "⇒", judgment) ;; hypothetical judgment
+  | prefix(paren("(", list(var, ",")), paren("[", judgment))
+        & eval
+        $(let ((vars (reverse (first TREE))) (b (second TREE)))
+           (while vars
+             (let ((var (car vars)))
+               (setq b (let ((V (list var)))
+                           (cons 'Abs (cons V (mabs V b))))))
+             (setq vars (cdr vars)))
+          b) ;; universal judgment
+  | paren("(", judgment)
+  | throw "「%s」は判断ではありません"
+  ;
+
+]

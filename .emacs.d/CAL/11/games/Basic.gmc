@@ -1,0 +1,43 @@
+(setq PEP
+     (concat CommonConstExp "\\|" CommonOpExp "\\|" CommonOpenExp
+     "\\|" CommonCloseExp))
+
+(DefClass 'varref-body '(or var (prefix "#" varref-body)))
+
+
+(DefClass 'varref '(or (and svar (eval (if cal-meta TREE (throw (quote fail) (quote (fail "Not in Meta-mode")))))) (and varref-body (eval (let ((list (mk-flat-list TREE))) (if (or (= (length list) 1) (and (= (length list) 2) (integerp (second list)))) (cons (quote var) list) (cons (quote varref) list)))))))
+
+
+(defun mk-flat-list (tree) (if (atom (car tree)) (if (= (length tree) 2) (list (second tree)) (list (second tree) (third tree))) (cons (second (car tree)) (mk-flat-list (second tree)))))
+
+
+(DefClass 'hyp-seq '(or (catch (and svar (eval (if cal-meta TREE (throw (quote fail) (quote (fail "Not in Meta-mode"))))))) (list hyp ",") (throw "「%s」は仮定列ではありません")))
+
+
+(DefClass 'hyp '(or var (infix-ic var "::" judgment) (throw "「%s」は仮定ではありません")))
+
+
+(DefClass 'derivation '(infix-ic (infix hyp-seq "├" judgment) "in" (infix-i deriv-game-name "since" deriv)))
+
+
+(DefClass 'deriv-game-name 'op)
+
+
+(DefClass 'deriv '(or var varref (and (infix-ic judgment "by" (postfix (or op (prefix op (paren "(" (list rule-arg ","))) (throw "by の直後は<規則の名前>が必要です")) (paren "{" (list deriv ";")))) (eval (cons exp-CD TREE))) (and (prefix (paren "(" hyp-seq) (paren "[" deriv)) (eval (let ((HS (reverse (first TREE))) (b (second TREE))) (while HS (let ((hyp (car HS))) (setq b (if (exp-var-p hyp) (let ((V (list hyp))) (cons (quote Abs) (cons V (mabs V b)))) (let ((V (list (car hyp))) (h (cdr hyp))) (list exp-HD h (cons (quote Abs) (cons V (mabs V b)))))))) (setq HS (cdr HS))) b))) (throw "「%s」は導出ではありません")))
+
+
+(DefClass 'judgment '(or sexp varref (infix judgment "⇒" judgment) (and (prefix-i "Π" (prefix (paren "(" (list var ",")) (paren "[" judgment))) (eval (let ((vars (reverse (first TREE))) (b (second TREE))) (while vars (let ((var (car vars))) (setq b (let ((V (list var))) (cons (quote Abs) (cons V (mabs V b)))))) (setq vars (cdr vars))) b))) (paren "(" judgment) (and (catch (prefix var (paren "[" (list judgment ",")))) (eval (if cal-meta (cons (quote sapp) TREE) (throw (quote fail) (quote (fail "Not in Meta-mode")))))) bj (throw "「%s」は判断ではありません")))
+
+
+(DefClass 'meta-derivation '(infix-ic (infix hyp-seq "├" judgment) "in" (infix-i deriv-game-name "since" meta-deriv)))
+
+
+(DefClass 'meta-deriv '(or var varref svar (and (prefix svar (paren "[" (list varref ","))) (eval (cons (quote sapp) TREE))) (and (infix-ic meta-judgment "by" (postfix (or (prefix op (paren "(" (list term ","))) op svar (and (prefix svar (paren "[" (list varref ","))) (eval (cons (quote sapp) TREE))) (throw "by の直後は<規則の名前>が必要です")) (paren "{" (list meta-deriv ";")))) (eval (cons exp-CD TREE))) (and (prefix (paren "(" hyp-seq) (paren "[" meta-deriv)) (eval (let ((HS (reverse (first TREE))) (b (second TREE))) (while HS (let ((hyp (car HS))) (setq b (if (exp-var-p hyp) (let ((V (list hyp))) (cons (quote Abs) (cons V (mabs V b)))) (let ((V (list (car hyp))) (h (cdr hyp))) (list exp-HD h (cons (quote Abs) (cons V (mabs V b)))))))) (setq HS (cdr HS))) b))) (throw "「%s」は導出ではありません")))
+
+
+(DefClass 'meta-judgment '(or sexp varref svar (and (prefix svar (paren "[" (list varref ","))) (eval (cons (quote sapp) TREE))) (catch bj) (infix judgment "⇒" judgment) (and (prefix (paren "(" (list var ",")) (paren "[" judgment)) (eval (let ((vars (reverse (first TREE))) (b (second TREE))) (while vars (let ((var (car vars))) (setq b (let ((V (list var))) (cons (quote Abs) (cons V (mabs V b)))))) (setq vars (cdr vars))) b))) (paren "(" judgment) (throw "「%s」は判断ではありません")))
+
+
+(setq PrimExpPat PEP)
+
+(setq PEP PrimExpPat)

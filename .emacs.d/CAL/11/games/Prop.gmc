@@ -1,0 +1,30 @@
+(let (var-pat const-pat op-pat open-pat close-pat)
+   (setq const-pat '("Ｏ"))
+   (setq op-pat '("Ⅶ" "〨" "〩" "十"))
+   (cal-deftokens))
+
+
+(DefClass 'bj '(or prop (throw "＞%s＝反湘呿�衛リリ洃═磥牏誘�")))
+
+
+(DefClass 'prop '(or "Ｏ" (and (prefix var (paren "[" (list prop ","))) (eval (cons (quote sapp) TREE))) varref svar (paren "(" prop) (paren "[" judgment) (infix prop "Ⅶ" prop) (infix prop "〩" prop) (infix prop "〨" prop) (prefix "十" prop) (throw "＞%s＝反抰鎖匹反丐曰引六氏")))
+
+
+(DefClass 'term '(or varref "nil" (throw "＞%s＝反嫩匹反丐曰引六氏")))
+
+
+(DefClass 'tex-bj 'tex-prop)
+
+
+(DefClass 'tex-prop '(or (and "Ｏ" tex-op) (tex-prefix tex-var (tex-paren "[" (tex-list tex-prop ","))) tex-varref svar (tex-paren "(" tex-prop) (tex-paren "[" tex-judgment) (tex-infix tex-prop "Ⅶ" tex-prop) (tex-infix tex-prop "〩" tex-prop) (tex-infix tex-prop "〨" tex-prop) (tex-prefix (and "十" tex-op) tex-prop)))
+
+
+(DefClass 'tex-term '(or tex-varref (and "nil" tex-op)))
+
+
+(setq PrimExpPat PEP)
+
+(DefGame 'Prop '(("U-E" (P a) (sapp (var "P" 462) ((var "a" 464))) (Abs ((var "x" 472)) (() () (1)) (sapp (var "P" 475) ((var 0))))) ("卄-E" (P Q) (var "Q" 433) ((op "卄" 439) (var "P" 438) (var "Q" 440)) (var "P" 443)) ("Ｏ-E" (P) (var "P" 409) (op "Ｏ" 414)) ("Ｏ-I" (P) (op "Ｏ" 372) (Abs ((var "x" 379)) 1 (var 0))) ("〩-E" (P Q R) (var "R" 325) ((op "〩" 331) (var "P" 330) (var "Q" 332)) ((op "卄" 337) (var "P" 335) (var "R" 339)) ((op "卄" 344) (var "Q" 342) (var "R" 346))) ("〩-IR" (P Q) ((op "〩" 293) (var "P" 292) (var "Q" 294)) (var "Q" 299)) ("〩-IL" (P Q) ((op "〩" 263) (var "P" 262) (var "Q" 264)) (var "P" 269)) ("〨-ER" (P Q) (var "Q" 232) ((op "〨" 238) (var "P" 237) (var "Q" 239))) ("〨-EL" (P Q) (var "P" 199) ((op "〨" 205) (var "P" 204) (var "Q" 206))) ("〨-I" (P Q) ((op "〨" 164) (var "P" 163) (var "Q" 165)) (var "P" 170) (var "Q" 173)) ("十-E" (P) (op "Ｏ" 131) ((op "十" 136) (var "P" 137)) (var "P" 140)) ("十-I" (P) ((op "十" 96) (var "P" 97)) ((op "卄" 104) (var "P" 102) (op "Ｏ" 106))) ("Ⅶ-E" (P Q) (var "Q" 62) ((op "Ⅶ" 68) (var "P" 67) (var "Q" 69)) (var "P" 72)) ("Ⅶ-I" (P Q) ((op "Ⅶ" 26) (var "P" 25) (var "Q" 27)) ((op "卄" 34) (var "P" 32) (var "Q" 36)))) t)
+
+
+(setq PEP PrimExpPat)

@@ -1,0 +1,192 @@
+;; Derivation Game LambdaTermDefEq:
+;; defined by Masahiko Sato at Sat Nov  1 19:57:46 2003
+;; defined by Masahiko Sato at Wed Oct  8 15:24:08 2003
+;; defined by Masahiko Sato at Thu Apr 10 17:23:59 2003
+;; defined by Masahiko Sato at Mon Dec  9 18:52:46 2002
+;; defined by Masahiko Sato at Thu Dec  5 12:39:38 2002
+;; defined by Masahiko Sato at Wed Dec  4 23:24:23 2002
+;; defined by Masahiko Sato at Tue Dec  3 20:12:59 2002
+;; defined by Masahiko Sato at Mon Dec  2 17:39:36 2002
+;; defined by Masahiko Sato at Sun Dec  1 22:15:39 2002
+;; defined by Masahiko Sato at Sat Nov 30 12:27:21 2002
+;; defined by Masahiko Sato at Wed Nov 27 15:26:31 2002
+;; defined by Masahiko Sato at Sun Nov 24 11:21:04 2002
+;; defined by Masahiko Sato at Sat Nov 23 23:31:57 2002
+
+tokens[
+
+  constant ::= "¦Ë" | "apply" | "pair" | "left" | "right"
+  | "inl" | "inr" | "case" | "in0" | "abort" 
+  | "c-abs" | "c-inst" | "inst"
+  | "¢¿" | "¢Ê" | "¢Ë" | "¢Ì" | "¢Ý"
+  | "variable" | "constant" | "nonvoid" | "nv-varseq" | "varseq" |  "exp" 
+  | "closed-exp" | "is-in"
+  | "unit-term" | "term"
+  | "unit-prop" | "not-prop" | "and-prop"
+  | "or-prop" | "prop" | "denotes" 
+  | "judg" | "s-judg" |"b-judg" ;
+  
+  operator ::= "¢ª" | "=" | "¢á" | "¢º" ;
+
+]
+
+syntax[
+
+  bj ::= infix(infix(term, "¢ª", term), ":",
+               ("unit-prop" | "not-prop" | "and-prop" | "or-prop" | "prop"
+                | "s-judg" | "b-judg" | "judg" | "unit-term" | "term"))
+  | infix(infix(term, "¢á", term), ":", "prop")
+  | infix(infix(term, "¢á", term), ":", "term")
+  | infix(term, "=", term)
+  | infix(term, ":", "variable") 
+  | infix(term, ":", "constant") 
+  | infix(term, ":", "nonvoid") 
+  | infix(term, ":", "nv-varseq") 
+  | infix(term, ":", "varseq") 
+  | infix(term, ":", "closed-exp") 
+  | infix(term, "exp", term)
+  | infix(term, "is-in", term)
+  | infix(infix(term, ":", "prop"), "denotes", term)
+  | infix(infix(term, ":", "term"), "denotes", term)
+  ;
+
+  term ::= varref
+  | paren("¡Ô", unitlist)
+  ;
+
+  tex-bj ::= tex-infix(tex-infix(tex-term, "¢ª", tex-term), ":",
+               ("unit-prop" | "not-prop" | "and-prop" | "or-prop" | "prop"
+                | "s-judg" | "b-judg" | "judg" | "unit-term" | "term"))
+  | tex-infix(tex-infix(tex-term, "¢á", tex-term), ":", "prop")
+  | tex-infix(tex-infix(tex-term, "¢á", tex-term), ":", "term")
+  | tex-infix(tex-term, "=", tex-term)
+  | tex-infix(tex-term, ":", "variable") 
+  | tex-infix(tex-term, ":", "constant") 
+  | tex-infix(tex-term, ":", "nonvoid") 
+  | tex-infix(tex-term, ":", "nv-varseq") 
+  | tex-infix(tex-term, ":", "varseq") 
+  | tex-infix(tex-term, ":", "closed-exp") 
+  | tex-infix(tex-term, "exp", tex-term)
+  | tex-infix(tex-term, "is-in", tex-term)
+  | tex-infix(tex-infix(tex-term, ":", "prop"), "denotes", tex-term)
+  | tex-infix(tex-infix(tex-term, ":", "term"), "denotes", tex-term)
+  ;
+
+  tex-term ::= tex-varref
+  | tex-paren("¡Ô", tex-unitlist)
+  ;
+
+]
+
+rules[
+
+  "variable"(al): al:variable :- $(cal-q-var-p al) ;
+  "constant"(ga): ga:constant 
+      :- $(cal-q-exp-const-p ga 
+           '("¢º" "¢Í" "¦Ë" "apply" "pair" "left" "right" "inl" "inr" "case"
+             "in0" "abort" "c-abs" "c-inst" "inst"
+             "¢¿" "¢Ê" "¢Ë" "¢Ì" "¢Ý" "nil")) ;
+  "nonvoid"(mu): mu:nonvoid :- $(cal-q-nonvoid-p mu) ;
+
+  "nv-varseq1"(al): al: nv-varseq :- al:variable ;
+  "nv-varseq2"(Ga,al): ¡Ô^Ga,^al¡Õ:nv-varseq :- Ga:nv-varseq, al:variable ;
+
+  "varseq0"(): ¡Ô¡Õ:  varseq :- ;
+  "varseq1"(Ga): Ga:  varseq :- Ga:nv-varseq ;
+
+  "is-in"(mu,nu): mu is-in nu :- $(cal-q-in mu nu) ;
+
+  "var-exp"(Ga,al): Ga exp al :- Ga:varseq, al:variable, al is-in Ga;
+  "const-exp"(Ga,ga): Ga exp ga :- Ga:varseq, ga:constant ;
+  "pair-exp"(Ga,ph,ps): Ga exp ¡Ô<^ph|^ps>¡Õ:- Ga exp ph, Ga exp ps ;
+  "abs-exp0"(al,ph): ¡Ô¡Õ exp ¡Ô(^al)[^ph]¡Õ :- al:variable, al exp ph ;
+  "abs-exp1"(Ga,al,ph): Ga exp ¡Ô(^al)[^ph]¡Õ
+      :- Ga:nv-varseq, al:variable, ¡Ô^Ga, ^al¡Õexp ph ;
+  
+  "closed-exp"(ph): ph:closed-exp :- ¡Ô¡Õexp ph ;
+ 
+  "var-list"(al): al = al :- al:variable ;
+  "const-list"(ga): ga = ga :- ga:constant ;
+  "pair-list"(mu,nu,ph,ps): ¡Ô<^mu | ^nu>¡Õ= ¡Ô<^ph | ^ps>¡Õ:-
+      mu=ph, nu=ps ;
+  "abs-list"(al,mu,ph): ¡Ô(^al)[^mu]¡Õ=¡Ô(^al)[^ph]¡Õ:- al:variable, mu = ph ;
+  "nil-list"(): ¡Ô<>¡Õ= ¡Ônil¡Õ:- ;
+  "cons-list0"(mu,ph): ¡Ô<^mu>¡Õ=¡Ô<^ph|nil>¡Õ:- mu=ph ;
+  "cons-list1"(mu,nu,ph,ps): ¡Ô<^mu,^nu>¡Õ=¡Ô<^ph|^ps>¡Õ:- 
+      mu=ph, nu:nonvoid,¡Ô<^nu>¡Õ=ps ;
+
+  "unit-term1"(al): al ¢ª al:unit-term :- al:variable ;
+  "unit-term2"(si,mu): ¡Ô(^si)¡Õ¢ª mu : unit-term :- si ¢ª mu : term ;
+  "unit-term3"(si,mu): si¢ª mu : term :- si ¢ª mu : unit-term ;
+  "¦Ë-term"(si,mu): ¡Ô¦Ë^si¡Õ¢ª ¡Ô<¦Ë , ^mu>¡Õ: term :- si ¢ª mu:term ;
+  "apply-term"(si,ta,mu,nu): ¡Ô^si(^ta)¡Õ¢ª ¡Ô<apply, ^mu, ^nu>¡Õ: term 
+      :- si ¢ª mu : term, ta ¢ª nu : term ;
+  "pair-term"(si,ta,mu,nu): ¡Ô[^si,^ta]¡Õ¢ª ¡Ô<pair,^mu,^nu>¡Õ: term
+      :- si ¢ª mu : term, ta ¢ª nu : term ;
+  "left-term"(si,mu): ¡Ôleft(^si)¡Õ¢ª¡Ô<left, ^mu>¡Õ:term :- si ¢ª mu : term ;
+  "right-term"(si,mu): ¡Ôright(^si)¡Õ¢ª¡Ô<right, ^mu>¡Õ:term :- si ¢ª mu : term ;
+  "inl-term"(si,mu): ¡Ôinl(^si)¡Õ¢ª¡Ô<inl, ^mu>¡Õ:term 
+      :- si ¢ª mu : term ;
+  "inr-term"(si,mu): ¡Ôinr(^si)¡Õ¢ª¡Ô<inr, ^mu>¡Õ:term 
+      :- si ¢ª mu : term ;
+  "case-term"(si,ta,rh,mu,nu,pi):
+      ¡Ôcase(^rh,^si,^ta)¡Õ
+       ¢ª¡Ô<case,^pi,^mu,^nu>¡Õ : term
+      :- rh¢ªpi:term, si¢ªmu:term, ta¢ªnu:term ;
+  "in0-term"(si,mu): ¡Ôin0(^si)¡Õ¢ª¡Ô<in0, ^mu>¡Õ:term :- si ¢ª mu : term ;
+  "abort-term"(si,mu): ¡Ôabort(^si)¡Õ¢ª¡Ô<abort, ^mu>¡Õ:term 
+      :- si ¢ª mu : term ;
+  "c-abs-term"(al,si,ta,mu,nu): 
+      ¡Ô(^al¢º^si)[^ta]¡Õ¢ª¡Ô<c-abs, ^mu, (^al)[^nu]>¡Õ:term
+      :- al:variable, si¢ªmu:prop, ta¢ªnu:term ;
+  "c-inst-term"(si,ta,mu,nu): ¡Ôc-inst(^si,^ta)¡Õ¢ª¡Ô<c-inst, ^mu, ^nu>¡Õ:term
+      :- si¢ªmu:term, ta¢ªnu:term ;
+  "abs-term"(al,si,mu): ¡Ô(^al)[^si]¡Õ¢ª¡Ô(^al)[^mu]¡Õ:term
+      :- al:variable, si¢ªmu:term ;
+  "inst-term"(si,ta,mu,nu): ¡Ôinst(^si,^ta)¡Õ¢ª¡Ô<inst, ^mu, ^nu>¡Õ:term
+      :- si¢ªmu:term, ta¢ªnu:term ;
+  
+  "unit-prop1"(): ¡Ô¢Ý¡Õ¢ª ¡Ô¢Ý¡Õ:unit-prop :- ;
+  "unit-prop2"(al): al ¢ª al:unit-prop :- al:variable ;
+  "unit-prop3"(si,mu): ¡Ô(^si)¡Õ¢ª mu : unit-prop :- si ¢ª mu : prop ;
+  "unit-prop4"(si,mu): ¡Ô[^si]¡Õ¢ª mu : unit-prop :- si ¢ª mu : judg ;
+
+  "not-prop1"(si,mu): si¢ª mu : not-prop :- si ¢ª mu : unit-prop ;
+  "not-prop2"(si,mu): ¡Ô¢Ì^si¡Õ¢ª ¡Ô<¢Ì, ^mu>¡Õ : not-prop :- si ¢ª mu : not-prop ;
+
+  "and-prop1"(si,mu): si¢ª mu : and-prop :- si ¢ª mu : not-prop ;
+  "and-prop2"(si,ta,mu,nu): ¡Ô^si¢Ê^ta¡Õ¢ª ¡Ô<¢Ê, ^mu, ^nu>¡Õ : and-prop
+      :- si ¢ª mu : not-prop, ta ¢ª nu : and-prop ;
+  
+  "or-prop1"(si,mu): si¢ª mu : or-prop :- si ¢ª mu : and-prop ;
+  "or-prop2"(si,ta,mu,nu): ¡Ô^si¢Ë^ta¡Õ¢ª ¡Ô<¢Ë, ^mu, ^nu>¡Õ : or-prop 
+      :- si ¢ª mu : and-prop, ta ¢ª nu:or-prop ;
+
+  "prop1"(si,mu): si¢ª mu : prop :- si ¢ª mu : or-prop ;
+  "prop2"(si,ta,mu,nu): ¡Ô^si¢¿^ta¡Õ¢ª ¡Ô<¢¿, ^mu, ^nu>¡Õ : prop 
+      :- si ¢ª mu : or-prop, ta ¢ª nu:prop ;
+
+  "s-judg1"(al): al ¢ª al:s-judg :- al:variable ;
+  "s-judg2"(si,mu): ¡Ô(^si)¡Õ¢ªmu : s-judg :- si ¢ª mu:judg ;
+  "s-judg3"(al,si,mu): ¡Ô¦°(^al)[^si]¡Õ¢ª¡Ô<¦°, (^al)[^mu]>¡Õ:s-judg
+      :- al:variable, si¢ªmu:judg ;
+  "b-judg"(si,ta,mu,nu): ¡Ô^si¢º^ta¡Õ¢ª¡Ô<¢º,^mu,^nu>¡Õ:b-judg
+      :- si¢ªmu:term, ta¢ªnu:prop ;
+  "judg1"(si,mu): si¢ªmu:judg :- si¢ªmu:s-judg ;
+  "judg2"(si,mu): si¢ªmu:judg :- si¢ªmu:b-judg ;
+  "judg3"(si,ta,mu,nu): ¡Ô^si¢Í^ta¡Õ¢ª¡Ô<¢Í,^mu,^nu>¡Õ:judg
+      :- si¢ªmu:s-judg, ta¢ªnu:judg;
+  "judg4"(si,ta,mu,nu): ¡Ô^si¢Í^ta¡Õ¢ª¡Ô<¢Í,^mu,^nu>¡Õ:judg
+      :- si¢ªmu:b-judg, ta¢ªnu:judg;
+  
+  "prop-denotes"(si,ph,mu): si:prop denotes ph :- si ¢ª mu:prop, mu = ph ;
+
+  "prop-defeq"(si,ta,ph): si ¢á ta : prop 
+      :- si:prop denotes ph, ta:prop denotes ph ;
+
+  "term-denotes"(si,ph,mu): si:term denotes ph :- si ¢ª mu:term, mu = ph ;
+
+  "term-defeq"(si,ta,ph): si ¢á ta : term 
+      :- si:term denotes ph, ta:term denotes ph ;
+
+]

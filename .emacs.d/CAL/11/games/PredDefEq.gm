@@ -1,0 +1,97 @@
+;; Derivation Game PredDefEq:
+;; defined by Masahiko Sato at Wed Jul  9 18:19:54 2003
+;; defined by Masahiko Sato at Mon Jul  7 17:48:08 2003
+
+tokens[
+
+  constant ::= "variable" | "obj" | "prop"
+  | "unit-prop" | "not-prop" | "and-prop" | "or-prop"
+  | "obj-fun" | "prop-fun"
+  | "app"
+  ;
+
+  operator ::= "¢Ý" | "¢Ì" | "¢Ê" | "¢Ë" | "¢¿" | "¢Ï" | "¢Ð" | "¢ª" | "¢á"
+  ;
+
+]
+
+syntax[
+
+  bj ::= infix(infix(term, "¢ª", term), ":",
+               ("unit-prop" | "not-prop" | "and-prop" | "or-prop" | "prop"
+                | "obj" | "obj-fun" | "prop-fun"))
+  | infix(term, ":", "variable")
+  | infix(infix(term, "¢á", term), ":", "prop")
+  ;
+
+  term ::= varref
+  | paren("¡Ô", unitlist)
+  ;
+
+  tex-bj ::= tex-infix(tex-infix(tex-term, "¢ª", tex-term), ":",
+               ("unit-prop" | "not-prop" | "and-prop" | "or-prop" | "prop"
+                | "obj" | "obj-fun" | "prop-fun"))
+  | tex-infix(tex-term, ":", "variable")
+  | tex-infix(tex-infix(tex-term, "¢á", tex-term), ":", "prop")
+  ;
+
+  tex-term ::= tex-varref
+  | tex-paren("¡Ô", tex-unitlist)
+  ;
+
+]
+
+rules[
+
+  "variable"(al): al:variable :- $(cal-q-var-p al) ;
+  
+  "unit-prop1"(): ¡Ô¢Ý¡Õ¢ª ¡Ô¢Ý¡Õ:unit-prop :- ;
+  "unit-prop2"(al): al ¢ª al:unit-prop :- al:variable ;
+  "unit-prop3"(si,ta,mu,nu): ¡Ô^si(^ta)¡Õ¢ª¡Ô<app,^mu,^nu>¡Õ:unit-prop :-
+      si¢ªmu:prop-fun, ta¢ªnu:obj ;
+  "unit-prop4"(si,ta,rh,mu,nu): 
+  ¡Ô^si(^ta,^rh)¡Õ¢ª¡Ô<app,^mu,^nu>¡Õ:unit-prop :-
+      ¡Ô^si(^ta)¡Õ¢ªmu:prop-fun, rh¢ªnu:obj ;
+  "unit-prop5"(x,si,mu): ¡Ô¢Ï(^x)[^si]¡Õ¢ª ¡Ô<¢Ï,(^x)[^mu]>¡Õ : unit-prop :- 
+      x:variable, si ¢ª mu : prop ;
+  "unit-prop6"(x,si,mu): ¡Ô¢Ð(^x)[^si]¡Õ¢ª ¡Ô<¢Ð,(^x)[^mu]>¡Õ : unit-prop :- 
+      x:variable, si ¢ª mu : prop ;
+  "unit-prop7"(si,mu): ¡Ô(^si)¡Õ¢ª mu : unit-prop :- si ¢ª mu : prop ;
+
+  "not-prop1"(si,mu): si¢ª mu : not-prop :- si ¢ª mu : unit-prop ;
+  "not-prop2"(si,mu): ¡Ô¢Ì^si¡Õ¢ª ¡Ô<¢Ì, ^mu>¡Õ : not-prop :- si ¢ª mu : not-prop ;
+
+  "and-prop1"(si,mu): si¢ª mu : and-prop :- si ¢ª mu : not-prop ;
+  "and-prop2"(si,ta,mu,nu): ¡Ô^si¢Ê^ta¡Õ¢ª ¡Ô<¢Ê, ^mu, ^nu>¡Õ : and-prop
+      :- si ¢ª mu : not-prop, ta ¢ª nu : and-prop ;
+  
+  "or-prop1"(si,mu): si¢ª mu : or-prop :- si ¢ª mu : and-prop ;
+  "or-prop2"(si,ta,mu,nu): ¡Ô^si¢Ë^ta¡Õ¢ª ¡Ô<¢Ë, ^mu, ^nu>¡Õ : or-prop 
+      :- si ¢ª mu : and-prop, ta ¢ª nu:or-prop ;
+
+  "prop1"(si,mu): si¢ª mu : prop :- si ¢ª mu : or-prop ;
+  "prop2"(si,ta,mu,nu): ¡Ô^si¢¿^ta¡Õ¢ª ¡Ô<¢¿, ^mu, ^nu>¡Õ : prop 
+      :- si ¢ª mu : or-prop, ta ¢ª nu:prop ;
+
+  "prop-fun1"(al): al¢ªal:prop-fun :- al:variable ;
+  "prop-fun2"(si,ta,mu,nu): ¡Ô^si(^ta)¡Õ¢ª¡Ô<app,^mu,^nu>¡Õ:prop-fun :-
+      si¢ªmu:prop-fun, ta¢ªnu:obj ;
+  "prop-fun3"(si,ta,rh,mu,nu): ¡Ô^si(^ta,^rh)¡Õ¢ª¡Ô<app,^mu,^nu>¡Õ:prop-fun :-
+      ¡Ô^si(^ta)¡Õ¢ªmu:prop-fun, rh¢ªnu:obj ;
+
+  "obj1"(al): al¢ªal:obj :- al:variable ;
+  "obj2"(si,ta,mu,nu): ¡Ô^si(^ta)¡Õ¢ª¡Ô<app,^mu,^nu>¡Õ:obj :-
+      si¢ªmu:obj-fun, ta¢ªnu:obj ;
+  "obj3"(si,ta,rh,mu,nu): ¡Ô^si(^ta,^rh)¡Õ¢ª¡Ô<app,^mu,^nu>¡Õ:obj :-
+      ¡Ô^si(^ta)¡Õ¢ªmu:obj-fun, rh¢ªnu:obj ;
+
+  "obj-fun1"(al): al¢ªal:obj-fun :- al:variable ;
+  "obj-fun2"(si,ta,mu,nu): ¡Ô^si(^ta)¡Õ¢ª¡Ô<app,^mu,^nu>¡Õ:obj-fun :-
+      si¢ªmu:obj-fun, ta¢ªnu:obj ;
+  "obj-fun3"(si,ta,rh,mu,nu): ¡Ô^si(^ta,^rh)¡Õ¢ª¡Ô<app,^mu,^nu>¡Õ:obj-fun :-
+      ¡Ô^si(^ta)¡Õ¢ªmu:obj-fun, rh¢ªnu:obj ;
+
+  "prop-defeq"(si,ta,mu): si ¢á ta : prop :- 
+      si ¢ª mu : prop, ta ¢ª mu : prop ;
+
+]

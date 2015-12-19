@@ -1,0 +1,276 @@
+2004-05-08  Masahiko Sato  <masahiko@debian>
+
+	* parser.el (Parse): removed redundant format in error function.
+
+2003-10-07  Masahiko Sato  <masahiko@debian>
+
+	* parser.el (parser-tex-symbol-alist): "Π", "Σ" を追加．
+
+2003-10-06  Masahiko Sato  <masahiko@debian>
+
+	* parser.el (CommonOpExp): "Π" (for universal judgment) を追加．
+	(DefPrimExpPat): prefix-i を追加．
+
+2003-07-09  Masahiko Sato  <masahiko@venus.kuis.kyoto-u.ac.jp>
+
+	* parser.el (parser-tex-op): debugged
+
+2003-01-14  Masahiko Sato  <masahiko@debian>
+
+	* parser.el (CommonOpExp): "def-I"と"def-E"を追加．
+
+2003-01-08  Masahiko Sato  <masahiko@venus.kuis.kyoto-u.ac.jp>
+
+	* parser.el (parser-tex-tt): 「{」，「}」を \leftbrace, \rightbrace
+	として出力．
+
+2003-01-01  Masahiko Sato  <masahiko@debian>
+
+	* parser.el (ParseString): dynamic variable META-VARS をセットする
+	のは，この変数を使う関数にまかせるように変更．(see, eg., caltex-parse-rule)
+
+2002-12-30  Masahiko Sato  <masahiko@debian>
+
+	* parser.el (parser-tex-skip-alist): 「,」，「;」ともに 0pt, 2pt にした．
+
+2002-12-13  Masahiko Sato  <masahiko@debian>
+
+	* parser.el (ParseString): PATTERN が derivation のときには
+	CAL-DERIV-STR に string をセット．
+
+2002-12-01  Masahiko Sato  <masahiko@debian>
+
+	* parser.el (CommonOpExp): triv を廃止，id を追加．
+
+2002-11-25  Masahiko Sato  <masahiko@venus.kuis.kyoto-u.ac.jp>
+
+	* parser.el (PrimClass): svar をリストに追加．
+	(Parse): svar の処理を追加．
+	(parser-forward-sexp): 対応する括弧がない場合の処理を変更. 旧 version を
+	old-parser-forward-sexp として保存．
+
+2002-11-24  Masahiko Sato  <masahiko@debian>
+
+	* parser.el (Parse): カテゴリー parse-tex-postfix 追加．
+	(ParseTeXPostfix): new function
+
+2002-11-23  Masahiko Sato  <masahiko@debian>
+
+	* parser.el (parser-forward-sexp): forward-sexp を吸収．エラーの
+	位置を表示するようにした．
+	(ReadToken): 上の変更に対応する変更．
+	(ReadAToken): 同上．
+
+2002-11-22  Masahiko Sato  <masahiko@venus.kuis.kyoto-u.ac.jp>
+
+	* parser.el (ParseTeXPrefix): 修正．
+
+2002-11-17  Masahiko Sato  <masahiko@debian>
+
+	* parser.el (ReadToken): ParseString の変数 offset を用いて epos
+	をセット．
+
+2002-11-16  Masahiko Sato  <masahiko@debian>
+
+	* parser.el (parser-keyword-p): new function.
+	(parser-tex-skip): keyword のとき 4pt スキップするようにした．
+
+2002-11-04  Masahiko Sato  <masahiko@debian>
+
+	* parser.el (ParseTeXPrefix): prefix が op のときに適切に処理．
+
+2002-10-23  Masahiko Sato  <masahiko@dyna>
+
+	* parser.el (ParseString): (parse-errop result)
+	の場合の処理のエラーを修正．
+
+2002-10-22  Masahiko Sato  <masahiko@dyna>
+
+	* parser.el (ParseString): (cal-toklist-region toklist) が nil
+	のときには error-pos を set しない．
+
+2002-10-20  Masahiko Sato  <masahiko@dyna>
+
+	* parser.el (parser-tex-symbol-alist): JIS code の文字に対応
+	する tex command のリスト
+
+2002-10-06  Masahiko Sato  <masahiko@debian>
+
+	* parser.el (ReadAToken): svar の場合にも pos-info が t のときに
+	正しく計算するようにした．
+	(ReadToken): svar の場合にも pos-info が t のときに
+	正しく計算するようにした．
+
+2002-10-05  Masahiko Sato  <masahiko@debian>
+
+	* parser.el (ParseTeXPrefix): operator を tt で出力するよう変更．
+	(ReadAToken): error-pos に offset を追加．
+	(ReadToken): error-pos に offset を追加．
+
+2002-10-02  Masahiko Sato  <masahiko@debian>
+
+	* parser.el (ParseTeXParen): 括弧を tt で出力．
+	(parser-tex-tt): string を tt で出力．
+	(ParseTeXList): 必要な部分を tt で出力するように変更．
+
+2002-09-30  Masahiko Sato  <masahiko@debian>
+
+	* parser.el (parser-tex-default-skip): infix operator と他の文字との
+	間隔を指定する変数．
+	(parser-tex-skip-alist): infix operator と他の文字の間隔を指定するための
+	リスト．
+	(parser-tex-skip): infix operator OP (文字列)から tex command をつくる
+	関数．
+
+2002-09-24  Masahiko Sato  <masahiko@debian>
+
+	* parser.el (ParseString): META-VARS を dynamic scope で利用できる
+	ように変更．
+	(with-syntax-table): copied from emacs21 for backward compatibility.
+
+2002-09-23  Masahiko Sato  <masahiko@debian>
+
+	* parser.el (ParseTeXList): debug
+
+2002-09-19  Masahiko Sato  <masahiko@dyna>
+
+	* parser.el: moved the following functions to cal-exp.el:
+	cadr (x), caar (x), cddr (list), caddr (list), cdddr (list),
+	first (x), second (x), third (x), fourth (x), fifth (x),
+	dt-list-get-last (list), first-but-last (list), center (list)
+
+2002-09-14  Masahiko Sato  <masahiko@dyna>
+
+	* parser.el (Parse): tex-infix, tex-prefix, tex-postfix, tex-list
+	の処理を追加．
+	(ParseTeXInfix): new function.
+	(ParseTeXInfixR): new function.
+	(ParseTeXPrefix): new function.
+	(ParseTeXParen): new function.
+	(ParseTeXList): new function.
+	(DefPrimExpPat): key word を追加．
+
+2002-09-03  Masahiko Sato  <masahiko@debian>
+
+	* parser.el (ParseString): optional argument BIAS
+	を追加．
+
+2002-09-01  Masahiko Sato  <masahiko@debian>
+
+	* parser.el (DefVarExp): Game file 解析するときの変数パターン．
+	"[a-zA-Z][a-zA-Z0-9_+-]*"
+	途中に + があってもよい．
+
+2002-08-29  Masahiko Sato  <masahiko@moon.kuis.kyoto-u.ac.jp>
+
+	* parser.el (ReadAToken): token でない文字については，位置情報をセットして
+	fail するように変更．
+
+2002-08-28  Masahiko Sato  <masahiko@debian>
+
+	* parser.el (parse-fail): 関数の名前の変更(<- fail).
+	(ParseString): 構文解析に失敗した token liist の位置情報をつかって，
+	エラーの原因となった文字列を再構築できるようにした．
+	(parse-fail): (throw 'fail (list 'fail str token-list))) 
+	の形式で throw するように変更．
+	(parse-failed): 新関数．
+	(parse-failed-str): 新関数．
+	(parse-failed-toklist): 新関数．
+	(parse-errorp): 新関数．
+	(parse-errorp-str): 新関数．
+	(ParseCommit): parse が fail したかどうかを parse-failed でチェックする
+	ように変更．
+	(ParseOr): parse が fail したかどうかを parse-failed でチェックする
+	ように変更．
+	(PatSearch): parse が fail したかどうかを parse-failed でチェックする
+	ように変更．
+	(PatSearchLast): parse が fail したかどうかを parse-failed でチェックする
+	ように変更．
+	(SearchInfix): parse が fail したかどうかを parse-failed でチェックする
+	ように変更．
+	(ParseConc): parse が fail したかどうかを parse-failed でチェックする
+	ように変更．
+	(ParseOk): parse が fail したかどうかを parse-failed でチェックする
+	ように変更．
+
+2002-08-27  Masahiko Sato  <masahiko@debian>
+
+	* parser.el (ReadToken): 変数にも位置情報を追加した．
+
+2002-08-26  Masahiko Sato  <masahiko@moon.kuis.kyoto-u.ac.jp>
+
+	* parser.el (ReadToken): paren の処理で， ReadToken を pos-info
+	nil にしていた bug を fix.
+
+2002-08-24  Masahiko Sato  <masahiko@debian>
+
+	* parser.el (ParseToken): OP
+	の position information を考慮してコードを改良
+	(parser-cut): 関数 cut を OP を考慮して変更．
+	(ParseList): OP を考慮して変更．関数 member の代りに
+	parse-op-member をつかう．
+	(parser-op-member): OP を考慮して op が list の要素かどうかを
+	判定する．
+
+2002-08-18  Masahiko Sato  <masahiko@debian>
+
+	* parser.el (TokenListToString): unit を文字列に変換できるようにし
+	た．
+	(Parse): primitive class sexp の処理を追加．
+	(TokenListToUnitlist): parser-scan-svar
+	をつかって，paren の場合を処理．
+	(parser-scan-svar): ユニット列が svar を含むかどうかを判定する関数．
+	svar free のときに T.
+
+2002-08-17  Masahiko Sato  <masahiko@debian>
+
+	* parser.el (Parse): primitive class unitlist を parse できるよう
+	にした．
+	(TokenListToUnitlist): 
+
+2002-08-15  Masahiko Sato  <masahiko@debian>
+
+	* parser.el (ParsePostfix): postfix
+	の部分を最初にパースするようにした．
+	(ReadToken): posix-looking-at が長さ 0 の文字列とマッチすることを
+	考慮してコードを変更した．
+	(ReadAToken): トークンをひとつ読み込む関数．
+	(ReadToken): ユニット引用を (unit ユニット)として読めるようにした．
+
+2002-08-14  Masahiko Sato  <masahiko@debian>
+
+	* parser.el (parser-skip-white-and-comments): ReadToken から
+	white & comments をスキップする部分を関数にした．
+
+2002-08-13  Masahiko Sato  <masahiko@debian>
+
+	* parser.el (ReadToken): looking-at を posix-looking-at に変更．
+	最長のマッチを獲得するようにした．
+	(TokenListToString): (sexp S式) の形のトークンを処理できるようにした．
+
+2002-08-12  Masahiko Sato  <masahiko@debian>
+
+	* parser.el (MkOrPattern): regexp-pattern
+	を or で結合する関数．
+	(PrimClass): 定数として定義．
+
+2002-08-04  Masahiko Sato  <masahiko@debian>
+
+	* parser.el (ElispDquote): 「"」を変数として定義．
+	(ReadToken): EmacsLisp の文字列をS式として読みこめるようにした．
+	(ReadToken): SvarExp が nil のときは何もしないようにした．
+
+2002-08-03  Masahiko Sato  <masahiko@debian>
+
+	* parser.el (ElispStart): Emacs Lisp
+	のS式をトークンとして読み込むために用いる文字．「$」にセットする．
+	(ReadToken): Emacs Lisp のS式をトークンとして読みこめるように変更．
+	(Parse): infixL を infixR に変更．R=Right associative
+	(DefToken): empty を PrimClass に追加．
+	(DefToken): token-type num を消去．
+	(ReadToken): num をトークンとして読み込む部分を消去．
+	(ClassNameList): syntax class の名前をリストとして保持するための変数を導入．
+	(ResetSyntaxRules): 新しいゲームの構文定義の最初に，それまでの構文規則をリセットする．
+	(DefToken): ResetSyntaxRules を最初に実行．
+	(ParseToken): sexp を扱えるようにした．不要な atom の場合を消去．
+

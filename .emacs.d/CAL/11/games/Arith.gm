@@ -1,0 +1,160 @@
+;; Derivation Game Arith:
+;; defined by Masahiko Sato at Wed Dec 24 21:11:54 2003
+;; defined by Masahiko Sato at Tue Nov 25 23:56:37 2003
+;; defined by Masahiko Sato at Mon Feb 17 23:06:40 2003
+;; defined by Masahiko Sato at Sun Feb  9 22:32:25 2003
+;; defined by Masahiko Sato at Thu Jan 30 18:33:34 2003
+;; defined by Masahiko Sato at Tue Jan 21 13:55:45 2003
+;; defined by Masahiko Sato at Mon Jan 20 18:53:24 2003
+;; defined by Masahiko Sato at Sun Jan 19 23:34:27 2003
+;; defined by Masahiko Sato at Wed Jan 15 14:34:23 2003
+;; defined by Masahiko Sato at Mon Jan 13 23:51:12 2003
+;; defined by Masahiko Sato at Sun Jan 12 23:27:19 2003
+;; defined by Masahiko Sato at Fri Jan 10 23:12:11 2003
+
+tokens[
+
+  constant ::= "Ｏ" | "0" | "Nat" ;
+  operator ::=  "Ⅶ" | "〨" | "〩" | "十" | "Ａ" | "Ｂ" 
+            |   "=" | "S" | "+" | "*" ;
+
+]
+
+syntax[
+  
+  bj ::= prop
+  | throw "＞%s＝反湘呿�衛リリ洃═磥牏誘�"
+  ;
+
+;; operators with weaker binding power comes first
+
+  prop ::= "Ｏ"
+  ;; the line below is for meta expression
+  | prefix(var, paren("[", list(term, ",")))
+    & eval $(if cal-meta
+                (cons 'sapp TREE)
+              (throw 'fail '(fail "Not in Meta-mode")))
+  | varref
+  | svar
+    & eval $(if cal-meta TREE (throw 'fail '(fail "Not in Meta-mode")))
+  | paren("(", prop)
+  | paren("[", judgment)
+  | prefix(("Ａ" | "Ｂ"),
+           prefix(paren("(", var), paren("[", prop)))
+    & eval $(let ((q (first TREE))
+                  (var (first (second TREE)))
+                  (body (second (second TREE))))
+              (list q (mAbs var body)))
+  | infix(prop, "Ⅶ", prop)
+  | infix(prop, "〩", prop)
+  | infix(prop, "〨", prop)
+  | prefix("十", prop)
+  ;; defined predicate
+  | prefix(op, paren("(", list(term, ",")))
+    & commit(eval
+      $(let* ((op-str (second (first TREE)))
+              (vars (second TREE))
+              (name (intern (concat cal-current-game ":" op-str)))
+              def)
+         (if (setq def (get name 'cal-def))
+             (if (= (length vars) (length (first def)))
+                 TREE
+               (throw 'fail (list 'fail  
+                              (format "%s 及婁醒反 %s 蜊匹允" 
+                               op-str (length (first def))))))
+           (throw 'fail (list 'fail 
+                         (format "%s 反課賄午仄化爛聒今木化中引六氏" op-str)))) ))
+  | infix(term, "=", term)
+  | infix(term, ":", "Nat")
+  | throw "＞%s＝反抰鎖匹反丐曰引六氏"
+  ;
+
+  term ::= varref
+  ;; the line below is for meta expression
+  | prefix(var, paren("[", list(term, ",")))
+    & eval $(if cal-meta
+                (cons 'sapp TREE)
+              (throw 'fail '(fail "Not in Meta-mode")))
+  | "0"
+  | paren("(", term)
+  | prefix("S", paren("(", term))
+  | infixR(term, "+", term)
+  | infixR(term, "*", term)
+  | throw "＞%s＝反嫩匹反丐曰引六氏"
+  ;
+
+  rule-arg ::= catch(term)
+  | prefix(paren("(", var), paren("[", prop))
+    & eval $(let ((var (first TREE))
+                  (body (second TREE)))
+              (mAbs var body))
+  ;
+
+  tex-bj ::= tex-prop ;
+
+  tex-prop ::= "Ｏ" & tex-op
+  ;; the line below is for meta expression
+  | tex-prefix(tex-var, 
+               tex-paren("[", tex-list(tex-term, ","))
+               & eval $(caltex-meta-apply token-list))
+  | tex-varref
+  | svar
+  ;; defined predicate
+  | tex-prefix(tex-op, tex-paren("(", tex-list(tex-term, ",")))
+  | tex-paren("(", tex-prop)
+  | tex-paren("[", tex-judgment)
+  | tex-prefix(("Ａ" | "Ｂ") & tex-op,
+           tex-prefix(tex-paren("(", tex-var), tex-paren("[", tex-prop)))
+  | tex-infix(tex-prop, "Ⅶ", tex-prop)
+  | tex-infix(tex-prop, "〩", tex-prop)
+  | tex-infix(tex-prop, "〨", tex-prop)
+  | tex-prefix("十" & tex-op, tex-prop)
+  | tex-infix(tex-term, "=", tex-term)
+  | throw "＞%s＝反抰鎖匹反丐曰引六氏"
+  ;
+  
+  tex-term ::= tex-varref
+  | "0" & tex-op
+  ;; the line below is for meta expression
+  | tex-prefix(tex-var, 
+               tex-paren("[", tex-list(tex-term, ","))
+               & eval $(caltex-meta-apply token-list))
+  | tex-paren("(", tex-term)
+  | tex-prefix("S" & tex-op, tex-paren("(", tex-term))
+  | tex-infix(tex-term, "+", tex-term)
+  | tex-infix(tex-term, "*", tex-term)
+  | throw "＞%s＝反嫩匹反丐曰引六氏"
+  ;
+
+]
+
+rules[
+   
+  "Ⅶ-I"(P, Q):     PⅦQ :- P 卄 Q ;
+  "Ⅶ-E"(P, Q):        Q :- PⅦQ, P ;
+  "十-I"(P):         十P :- P 卄 Ｏ ;
+  "十-E"(P):          Ｏ :- 十P, P ;
+  "〨-I"(P, Q):     P〨Q :- P, Q ;
+  "〨-EL"(P, Q):       P :- P〨Q ;
+  "〨-ER"(P, Q):       Q :- P〨Q ;
+  "〩-IL"(P, Q):    P〩Q :- P ;
+  "〩-IR"(P, Q):    P〩Q :- Q ;
+  "〩-E"(P, Q, R):     R :- P〩Q, P 卄 R, Q 卄 R ;
+  "Ｏ-I"(a):           Ｏ :- S(a)=0 ;
+  "Ｏ-E"(P):           P :- Ｏ ;
+  "Ａ-I"(P):		Ａ(x)[P[x]] :- 旭(x)[P[x]] ;
+  "Ａ-E"(P,a):		P[a] :- Ａ(x)[P[x]] ;
+  "Ｂ-I"(P,a):		Ｂ(x)[P[x]] :- P[a] ;
+  "Ｂ-E"(P,Q):		Q :- Ｂ(x)[P[x]], 旭(x)[P[x]卄Q] ;
+  "ind"(P):		Ａ(x)[P[x]] :- P[0], 旭(k)[P[k]卄P[S(k)]] ;
+
+  "+-0"(a):		a+0=a :- ;
+  "+-S"(a,b):		a+S(b)=S(a+b) :- ;
+  "*-0"(a):		a*0=0 :- ;
+  "*-S"(a,b):		a*S(b)=a*b + a :- ;
+  "S-inj"(a,b):		a=b :- S(a)=S(b) ;
+  "refl"(a):		a=a :- ;
+  "repl"(a,b,P):	P[b] :- P[a], a=b ;
+  "=-repl"(a,b,c):	c[a]=c[b] :- a=b ;
+
+]

@@ -1,0 +1,85 @@
+;; Derivation Game NJ:
+;; defined by Masahiko Sato at Mon Sep 23 20:36:02 2002
+
+;; Derivation Game NJ:
+;; defined by Masahiko Sato at Tue Sep 17 18:13:24 2002
+
+tokens[
+
+  constant ::= "Ｏ" ;
+  operator ::=  "Ⅶ" | "〨" | "〩" | "十" | "Ａ" | "Ｂ" ;
+
+]
+
+syntax[
+  
+  bj ::= prop
+  |  throw "＞%s＝反湘呿�衛リリ洃═磥牏誘�"
+  ;
+
+;; operators with weaker binding power comes first
+
+prop ::= "Ｏ"
+  ;; the line below is for meta expression
+  |  prefix(var, paren("[", list(prop, ",")))
+     & eval $(cons 'sapp TREE)
+  |  varref
+  |  paren("(", prop)
+  |  infixL(prop, "Ⅶ", prop)
+  |  infixL(prop, "〩", prop)
+  |  infixL(prop, "〨", prop)
+  |  prefix("十", prop)
+     & eval $(let ((p (second TREE))) (list '(op "Ⅶ") p '(op "Ｏ")))
+  |  prefix(varref, paren("(", list(term, ",")))
+  |  prefix(("Ａ" | "Ｂ"), prefix(paren("(", var), paren("[", prop)))
+     & eval $(let ((q (first TREE))
+                   (var (first (second TREE)))
+                   (body (second (second TREE))))
+              (list q (mAbs var body)))
+  |  throw "＞%s＝反抰鎖匹反丐曰引六氏"
+  ;
+
+  term ::= varref
+  |  "nil"
+  |  throw "＞%s＝反嫩匹反丐曰引六氏"
+  ;
+
+  tex-bj ::= tex-prop ;
+
+  tex-prop ::= "Ｏ"
+  ;; the line below is for meta expression
+  |  tex-prefix(tex-var, tex-paren("[", tex-list(tex-prop, ",")))
+  |  tex-varref
+  |  tex-paren("(", tex-prop)
+  |  tex-infixL(tex-prop, "Ⅶ", tex-prop)
+  |  tex-infixL(tex-prop, "〩", tex-prop)
+  |  tex-infixL(tex-prop, "〨", tex-prop)
+  |  tex-prefix("十", tex-prop)
+  |  tex-prefix(tex-varref, tex-paren("(", tex-list(tex-term, ",")))
+  |  tex-prefix(("Ａ" | "Ｂ"), 
+                tex-prefix(tex-paren("(", tex-var), tex-paren("[", tex-prop)))
+  ;
+  
+  tex-term ::= tex-varref
+  |  "nil"
+  ;
+
+]
+
+ rules[
+
+  "ⅦI"(a, b):     aⅦb :- a 卄 b ;
+  "ⅦE"(a, b):        b :- aⅦb, a ;
+  "〨I"(a, b):     a〨b :- a, b ;
+  "〨EL"(a, b):       a :- a〨b ;
+  "〨ER"(a, b):       b :- a〨b ;
+  "〩IL"(a, b):    a〩b :- a ;
+  "〩IR"(a, b):    a〩b :- b ;
+  "〩E"(a, b, c):     c :- a〩b, a 卄 c, b 卄 c ;
+  "ＯE"(c):           c :- Ｏ ;
+  "ＡI"(P):	Ａ(x)[P[x]] :- (x)[P[x]] ;
+  "ＡE"(P, e):	P[e] :- Ａ(x)[P[x]] ;
+  "ＢI"(P, e):	Ｂ(x)[P[x]] :- P[e] ;
+  "ＢE"(P, Q):	Q :- Ｂ(x)[P[x]], (x)[P[x] 卄 Q] ;
+
+]

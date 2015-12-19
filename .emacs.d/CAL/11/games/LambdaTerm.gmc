@@ -1,0 +1,42 @@
+(let (var-pat const-pat op-pat open-pat close-pat)
+   (setq const-pat '("¢Ý"))
+   (setq op-pat '("¢¿" "¢Ê" "¢Ë" "¢Ì" "¢º" "¦Ë" "in0" "abort" "left" "right" "inl" "inr" "case" "c-inst" "inst"))
+   (cal-deftokens))
+
+
+(DefClass 'bj '(or (infix term "¢º" prop) (throw "¡Ö%s¡×¤Ï´ðËÜÈ½ÃÇ¤Ç¤Ï¤¢¤ê¤Þ¤»¤ó")))
+
+
+(DefClass 'prop '(or "¢Ý" (and (prefix var (paren "[" (list prop ","))) (eval (cons (quote sapp) TREE))) varref (paren "(" prop) (paren "[" judgment) (infix prop "¢¿" prop) (infix prop "¢Ë" prop) (infix prop "¢Ê" prop) (prefix "¢Ì" prop) (throw "¡Ö%s¡×¤ÏÌ¿Âê¤Ç¤Ï¤¢¤ê¤Þ¤»¤ó")))
+
+
+(DefClass 'term '(or varref (and (catch (prefix svar (paren "[" (list term ",")))) (eval (if cal-meta (cons (quote sapp) TREE) (throw (quote fail) (quote (fail "Not in Meta-mode")))))) (prefix "in0" (paren "(" abs-term)) (prefix-c "abort" (prefix (paren "(" prop) (paren "(" term))) (prefix "¦Ë" c-abs-term) (and (catch (postfix term (paren "(" term))) (eval (cons (quote (op "apply")) TREE))) (and (paren "[" (infix-i term "," term)) (eval (cons (quote (op "pair")) TREE))) (prefix "left" (paren "(" term)) (prefix "right" (paren "(" term)) (prefix "inl" (paren "(" term)) (prefix "inr" (paren "(" term)) (prefix-c "case" (paren "(" (infix-ic term "," (infix-i term "," term)))) c-abs-term (prefix-c "c-inst" (paren "(" (infix-i term "," term))) (and (prefix (paren "(" var) (paren "[" term)) (eval (let ((var (first TREE)) (body (second TREE))) (mAbs var body)))) (and (prefix var (paren "[" (list term ","))) (eval (cons (quote sapp) TREE))) (prefix-c "inst" (paren "(" (infix-i term "," term))) (paren "(" term) (throw "¡Ö%s¡×¤Ï¹à¤Ç¤Ï¤¢¤ê¤Þ¤»¤ó")))
+
+
+(DefClass 'c-abs-term '(or varref (paren "(" term) (and (prefix (paren "(" (infix var "¢º" prop)) (paren "[" term)) (eval (let ((var (second (first TREE))) (body (second TREE)) (prop (third (first TREE)))) (list (quote (op "c-abs")) prop (mAbs var body)))))))
+
+
+(DefClass 'tex-bj '(tex-infix tex-term "¢º" tex-prop))
+
+
+(DefClass 'tex-prop '(or (and "¢Ý" tex-op) (tex-prefix tex-var (and (tex-paren "[" (tex-list tex-prop ",")) (eval (caltex-meta-apply token-list)))) tex-varref (tex-paren "(" tex-prop) (tex-paren "[" tex-judgment) (tex-infix tex-prop "¢¿" tex-prop) (tex-infix tex-prop "¢Ë" tex-prop) (tex-infix tex-prop "¢Ê" tex-prop) (tex-prefix "¢Ì" tex-prop)))
+
+
+(DefClass 'tex-term '(or tex-varref (tex-prefix (and "in0" tex-op) (tex-paren "(" tex-abs-term)) (tex-prefix (and "abort" tex-op) (tex-prefix (and (paren "(" tex-prop) (eval (list (quote sexp) (concat "_{\\mbox{\\small $" (second TREE) "$}}")))) (tex-paren "(" tex-term))) (tex-prefix (and "¦Ë" tex-op) tex-c-abs-term) (catch (tex-postfix tex-term (tex-paren "(" tex-term))) (tex-paren "[" (tex-infix tex-term "," tex-term)) (tex-prefix (and "left" tex-op) (tex-paren "(" tex-term)) (tex-prefix (and "right" tex-op) (tex-paren "(" tex-term)) (tex-prefix (and "inl" tex-op) (tex-paren "(" tex-term)) (tex-prefix (and "inr" tex-op) (tex-paren "(" tex-term)) (tex-prefix (and "case" tex-op) (tex-paren "(" (tex-infix tex-term "," (tex-infix tex-term "," tex-term)))) tex-c-abs-term (tex-prefix (and "c-inst" tex-op) (tex-paren "(" (tex-infix tex-term "," tex-term))) (tex-prefix (tex-paren "(" tex-var) (tex-paren "[" tex-term)) (tex-prefix tex-var (and (tex-paren "[" (tex-list tex-term ",")) (eval (caltex-meta-apply token-list)))) (tex-prefix (and "inst" tex-op) (tex-paren "(" (tex-infix tex-term "," tex-term))) (throw "¡Ö%s¡×¤Ï¹à¤Ç¤Ï¤¢¤ê¤Þ¤»¤ó")))
+
+
+(DefClass 'tex-c-abs-term '(or tex-varref (tex-paren "(" tex-term) (tex-prefix (tex-paren "(" (tex-infix tex-var "¢º" tex-prop)) (tex-paren "[" tex-term))))
+
+
+(DefClass 'abs-term '(or varref (and (prefix (paren "(" var) (paren "[" term)) (eval (let ((var (first TREE)) (body (second TREE))) (mAbs var body))))))
+
+
+(DefClass 'tex-abs-term '(or tex-varref (tex-prefix (tex-paren "(" tex-var) (tex-paren "[" tex-term))))
+
+
+(setq PrimExpPat PEP)
+
+(DefGame 'LambdaTerm '(("¦Ësimple" (A b B) ((op "¢º" 867) ((op "¦Ë" 858) ((op "c-abs") (var "A" 862) (Abs ((var "x" 860)) () (var "b" 865)))) ((op "¢¿" 869) (var "A" 868) (var "B" 870))) (Abs ((var "x" 877)) (() (() 1)) ((op "¢Í" 884) ((op "¢º" 881) (var 0) (var "A" 882)) ((op "¢º" 887) (var "b" 886) (var "B" 888))))) ("case-base" (c f g A B C) ((op "¢º" 802) ((op "case" 789) (var "c" 794) (var "f" 797) (var "g" 800)) (var "C" 803)) ((op "¢º" 809) (var "c" 808) ((op "¢Ë" 811) (var "A" 810) (var "B" 812))) ((op "¢º" 816) (var "f" 815) ((op "¢Í" 820) (var "A" 818) (var "C" 822))) ((op "¢º" 827) (var "g" 826) ((op "¢Í" 831) (var "B" 829) (var "C" 833)))) ("¦Ë-base" (A B f) ((op "¢º" 741) ((op "¦Ë" 739) (var "f" 740)) ((op "¢¿" 743) (var "A" 742) (var "B" 744))) ((op "¢º" 750) (var "f" 749) ((op "¢Í" 754) (var "A" 752) (var "B" 756)))) ("inst" (a A f) ((op "¢º" 692) ((op "inst" 682) (var "f" 687) (var "a" 690)) (sapp (var "A" 694) ((var "a" 696)))) ((op "¢º" 704) (var "f" 703) (Abs ((var "x" 708)) (() () (1)) (sapp (var "A" 711) ((var 0)))))) ("univ" (a A) ((op "¢º" 630) (Abs ((var "x" 622)) (() () (1)) (sapp (var "a" 625) ((var 0)))) (Abs ((var "x" 634)) (() () (1)) (sapp (var "A" 637) ((var 0))))) (Abs ((var "x" 649)) (() (() () (1)) (() () (1))) ((op "¢º" 656) (sapp (var "a" 652) ((var 0))) (sapp (var "A" 657) ((var 0)))))) ("c-inst" (A f a B) ((op "¢º" 585) ((op "c-inst" 574) (var "f" 581) (var "a" 583)) (var "B" 586)) ((op "¢º" 592) (var "f" 591) ((op "¢Í" 595) (var "A" 594) (var "B" 596))) ((op "¢º" 601) (var "a" 600) (var "A" 602))) ("cond" (A B b) ((op "¢º" 522) ((op "c-abs") (var "A" 514) (Abs ((var "x" 512)) (() () (1)) (sapp (var "b" 517) ((var 0))))) ((op "¢Í" 525) (var "A" 524) (var "B" 526))) (Abs ((var "x" 534)) (() (() 1) (() (() () (1)))) ((op "¢Í" 541) ((op "¢º" 538) (var 0) (var "A" 539)) ((op "¢º" 547) (sapp (var "b" 543) ((var 0))) (var "B" 548))))) ("case" (c a b A B C) ((op "¢º" 431) ((op "case" 398) (var "c" 403) ((op "c-abs") (var "A" 409) (Abs ((var "x" 407)) (() () (1)) (sapp (var "a" 412) ((var 0))))) ((op "c-abs") (var "B" 422) (Abs ((var "y" 420)) (() () (1)) (sapp (var "b" 425) ((var 0)))))) (var "C" 432)) ((op "¢º" 445) (var "c" 444) ((op "¢Ë" 447) (var "A" 446) (var "B" 448))) (Abs ((var "x" 453)) (() (() 1) (() (() () (1)))) ((op "¢Í" 460) ((op "¢º" 457) (var 0) (var "A" 458)) ((op "¢º" 466) (sapp (var "a" 462) ((var 0))) (var "C" 467)))) (Abs ((var "y" 473)) (() (() 1) (() (() () (1)))) ((op "¢Í" 480) ((op "¢º" 477) (var 0) (var "B" 478)) ((op "¢º" 486) (sapp (var "b" 482) ((var 0))) (var "C" 487))))) ("inr" (A b B) ((op "¢º" 361) ((op "inr" 355) (var "b" 359)) ((op "¢Ë" 363) (var "A" 362) (var "B" 364))) ((op "¢º" 370) (var "b" 369) (var "B" 371))) ("inl" (B a A) ((op "¢º" 325) ((op "inl" 319) (var "a" 323)) ((op "¢Ë" 327) (var "A" 326) (var "B" 328))) ((op "¢º" 334) (var "a" 333) (var "A" 335))) ("right" (A B c) ((op "¢º" 289) ((op "right" 281) (var "c" 287)) (var "B" 290)) ((op "¢º" 296) (var "c" 295) ((op "¢Ê" 298) (var "A" 297) (var "B" 299)))) ("left" (A B c) ((op "¢º" 249) ((op "left" 242) (var "c" 247)) (var "A" 250)) ((op "¢º" 256) (var "c" 255) ((op "¢Ê" 258) (var "A" 257) (var "B" 259)))) ("pair" (a A b B) ((op "¢º" 206) ((op "pair") (var "a" 201) (var "b" 204)) ((op "¢Ê" 208) (var "A" 207) (var "B" 209))) ((op "¢º" 215) (var "a" 214) (var "A" 216)) ((op "¢º" 220) (var "b" 219) (var "B" 221))) ("apply" (a A f B) ((op "¢º" 162) ((op "apply") (var "f" 158) (var "a" 160)) (var "B" 163)) ((op "¢º" 169) (var "f" 168) ((op "¢¿" 171) (var "A" 170) (var "B" 172))) ((op "¢º" 176) (var "a" 175) (var "A" 177))) ("¦Ë" (A b B) ((op "¢º" 109) ((op "¦Ë" 97) ((op "c-abs") (var "A" 101) (Abs ((var "x" 99)) (() () (1)) (sapp (var "b" 104) ((var 0)))))) ((op "¢¿" 111) (var "A" 110) (var "B" 112))) (Abs ((var "x" 119)) (() (() 1) (() (() () (1)))) ((op "¢Í" 126) ((op "¢º" 123) (var 0) (var "A" 124)) ((op "¢º" 132) (sapp (var "b" 128) ((var 0))) (var "B" 133))))) ("abort" (A a) ((op "¢º" 71) ((op "abort" 60) (var "A" 66) (var "a" 69)) (var "A" 72)) ((op "¢º" 78) (var "a" 77) (op "¢Ý" 79))) ("in0" (a) ((op "¢º" 23) ((op "in0" 17) (var "a" 21)) (op "¢Ý" 24)) ((op "¢º" 30) (var "a" 29) (Abs ((var "x" 34)) 1 (var 0))))) t)
+
+
+(setq PEP PrimExpPat)

@@ -1,0 +1,79 @@
+;; Derivation Game Strange:
+;; defined by Masahiko Sato at Wed Jan  8 09:12:25 2003
+;; defined by Masahiko Sato at Sat Dec 28 14:32:40 2002
+
+tokens[
+
+  constant ::= "¢Ý" | "0" | "Even" | "Odd" ;
+  operator ::=  "¢¿" | ":" | "¦Ë" | "S" | "in0" | "abort" ;
+
+]
+
+syntax[
+  
+  bj ::= infix(term, ":", prop)
+  | throw "¡Ö%s¡×¤Ï´ðËÜÈ½ÃÇ¤Ç¤Ï¤¢¤ê¤Þ¤»¤ó"
+  ;
+
+;; operators with weaker binding power comes first
+
+  prop ::= "¢Ý"
+  | "Even"
+  | "Odd"
+  ;; the line below is for meta expression
+  | prefix(var, paren("[", list(prop, ",")))
+    & eval $(cons 'sapp TREE)
+  | varref
+  | paren("(", prop)
+  | paren("[", judgment)
+  | infixL(prop, "¢¿", prop)
+  | throw "¡Ö%s¡×¤ÏÌ¿Âê¤Ç¤Ï¤¢¤ê¤Þ¤»¤ó"
+  ;
+
+  term ::= varref
+  | prefix("in0", paren("(", abs-term))
+  | prefix-c("abort", paren("(", term))
+  | "0"
+  ;; we treat the form ¦Ëf(a) first and parse it as an apply-term
+  | catch(postfix(prefix("¦Ë", term), paren("(", term)))
+    & eval $(cons '(op "apply") TREE)
+  | prefix("¦Ë", l-abs-term)
+  | catch(postfix(term, paren("(", term)))
+    & eval $(cons '(op "apply") TREE)
+  | prefix("S", paren("(", term))
+  | ;; for rules of derivation games
+    prefix(var, paren("[", list(term, ",")))
+    & eval $(cons 'sapp TREE)
+  | paren("(", term)
+  | throw "¡Ö%s¡×¤Ï¹à¤Ç¤Ï¤¢¤ê¤Þ¤»¤ó"
+  ;
+
+  l-abs-term ::= 
+  prefix(paren("(", infix(var, ":", prop)), paren("[", term))
+          & eval $(let ((var (second (first TREE)))
+                        (body (second TREE))
+                        (prop (third (first TREE))))
+                    (list '(op "c-abs") prop (mAbs var body)))
+  ;
+
+  abs-term ::= varref
+  | prefix(paren("(", var), paren("[", term))
+    ;; (x)[a] is parsed into (x a)
+    & eval $(let ((var (first TREE)) (body (second TREE)))
+             (mAbs var body))
+  ;
+]
+
+rules[
+  
+  "in0"(a, A): in0(a):¢Ý :- a:[(x)[x]] ;
+  "abort"(a, A): abort(A)(a):A :- a:¢Ý ;
+  "even0"(): 0:Even :- ;
+  "even2"(n): S(S(n)):Even :- n:Even ;
+  "odd1"(): S(0):Odd :- ;
+  "odd2"(n): S(S(n)):Odd :- n:Odd ;
+  "even-odd"(n): n:¢Ý :- n:Even, n:Odd ;
+  "¦Ë"(A,B,b,x): ¦Ë(x:A)[b[x]]:A¢¿B :- x:A ¢Í b[x]:B ;
+  "apply"(a,A,f,B): f(a):B :- f:A¢¿B, a:A ;
+
+]

@@ -1,0 +1,27 @@
+(let (var-pat const-pat op-pat open-pat close-pat)
+   (setq const-pat '("0" "Nat"))
+   (setq op-pat '("S" "\+" "\*" "="))
+   (cal-deftokens))
+
+
+(DefClass 'bj '(or (infix term ":" "Nat") (infix term "=" term) (throw "「%s」は基本判断ではありません")))
+
+
+(DefClass 'term '(or "0" varref (paren "(" (commit term)) (prefix "S" (paren "(" term)) (infix term "+" term) (infix term "*" term) (throw "「%s」は項でありません")))
+
+
+(DefClass 'tex-bj '(or (tex-infix tex-term ":" "Nat") (tex-infix tex-term "=" tex-term) (throw "「%s」は基本判断ではありません")))
+
+
+(DefClass 'tex-term '(or (and "0" tex-op) tex-varref (tex-paren "(" (commit tex-term)) (tex-prefix (and "S" tex-op) (tex-paren "(" tex-term)) (tex-infix tex-term (and "+" tex-op) tex-term) (tex-infix tex-term (and "*" tex-op) tex-term) (throw "「%s」は項でありません")))
+
+
+(cons 1 2)
+
+
+(setq PrimExpPat PEP)
+
+(DefGame 'Test '(("*succ" (n k v u) ((op "=" 205) ((op "*" 200) (var "n" 199) ((op "S" 201) (var "k" 203))) (var "v" 206)) ((op "=" 214) ((op "*" 212) (var "n" 211) (var "k" 213)) (var "u" 215)) ((op "=" 221) ((op "+" 219) (var "u" 218) (var "n" 220)) (var "v" 222))) ("*zero" (n) ((op "=" 160) ((op "*" 158) (var "n" 157) (op "0" 159)) (op "0" 161)) ((op ":" 167) (var "n" 166) (op "Nat" 168))) ("+succ" (n k v) ((op "=" 121) ((op "+" 116) (var "n" 115) ((op "S" 117) (var "k" 119))) ((op "S" 122) (var "v" 124))) ((op "=" 133) ((op "+" 131) (var "n" 130) (var "k" 132)) (var "v" 134))) ("+zero" (n) ((op "=" 82) ((op "+" 80) (var "n" 79) (op "0" 81)) (var "n" 83)) ((op ":" 89) (var "n" 88) (op "Nat" 90))) ("succ" (n) ((op ":" 44) ((op "S" 40) (var "n" 42)) (op "Nat" 45)) ((op ":" 53) (var "n" 52) (op "Nat" 54))) ("zero" () ((op ":" 17) (op "0" 16) (op "Nat" 18)))) t)
+
+
+(setq PEP PrimExpPat)
